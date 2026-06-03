@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="96" viewBox="0 0 360 96">
+  <g>
+    <rect x="10" y="10" width="76" height="76" fill="none" stroke="#ffffff" stroke-width="3.5"></rect>
+    <line x1="48" y1="10" x2="48" y2="86" stroke="#ffffff" stroke-width="3.5"></line>
+    <line x1="10" y1="48" x2="86" y2="48" stroke="#ffffff" stroke-width="3.5"></line>
+    <rect x="48" y="10" width="38" height="38" fill="#4a90c2"></rect>
+  </g>
+  <g font-family="&#39;Noto Sans JP&#39;, &#39;Hiragino Kaku Gothic ProN&#39;, sans-serif" font-weight="500">
+    <text x="112" y="60" font-size="32" fill="#ffffff">可能性</text>
+  </g>
+  <g font-family="&#39;Work Sans&#39;, sans-serif" font-weight="500">
+    <text x="232" y="60" font-size="32" fill="#a8c9e0" letter-spacing="2">LABO</text>
+  </g>
+</svg>

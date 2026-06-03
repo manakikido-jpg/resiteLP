@@ -1,0 +1,9 @@
+# Deploy / tooling state (machine-specific; site IDs are recorded in README.md)
+.netlify/
+.vercel
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.log
+node_modules/

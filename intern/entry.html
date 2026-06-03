@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>エントリー｜可能性ラボ インターン</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=Shippori+Mincho:wght@400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --p: #D14A2A;
+  --pl: #E88568;
+  --a: #F2B7A0;
+  --bg1: #FBF6EF;
+  --bg2: #EDE3D4;
+  --t: #2C2C2C;
+  --ts: #6B6B7A;
+  --tl: #A0A0B0;
+  --w: #FFFFFF;
+  --bd: #F5E4DC;
+  --sd: 'Syne', sans-serif;
+  --sj: 'Shippori Mincho', 'Noto Serif JP', serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Noto Sans JP', 'Yu Gothic', 'Hiragino Kaku Gothic ProN', sans-serif;
+  color: var(--t);
+  background: var(--bg1);
+  min-height: 100vh;
+  font-feature-settings: 'palt' 1;
+  -webkit-font-smoothing: antialiased;
+  position: relative;
+  overflow-x: hidden;
+}
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: -2;
+  background:
+    radial-gradient(ellipse 70% 50% at 10% 5%, rgba(209,74,42,0.06) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 50% at 95% 90%, rgba(232,133,104,0.06) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.hd {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(251,246,239,0.85);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(209,74,42,0.1);
+}
+.hd-in {
+  max-width: 720px; margin: 0 auto;
+  padding: 16px 24px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+.hd-logo {
+  text-decoration: none;
+  display: flex; align-items: center;
+}
+.hd-logo img { height: 44px; width: auto; display: block; }
+.hd-back {
+  font-size: 0.72rem; color: var(--ts); text-decoration: none;
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: color 0.25s;
+}
+.hd-back:hover { color: var(--p); }
+
+.pg { max-width: 720px; margin: 0 auto; padding: 20px 24px 0; }
+.pg-labels {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 10px;
+}
+.pg-step {
+  font-family: var(--sd); font-size: 0.65rem; letter-spacing: 0.22em;
+  color: var(--p); text-transform: uppercase; font-weight: 500;
+}
+.pg-count { font-family: var(--sd); font-size: 0.68rem; color: var(--tl); letter-spacing: 0.12em; }
+.pg-count .cur { color: var(--p); font-weight: 600; }
+.pg-bar {
+  height: 2px; background: rgba(209,74,42,0.12); border-radius: 2px;
+  overflow: hidden; position: relative;
+}
+.pg-bar-fill {
+  height: 100%; background: var(--p); width: 20%;
+  transition: width 0.5s cubic-bezier(.2,.8,.2,1);
+}
+
+.chat { max-width: 720px; margin: 0 auto; padding: 32px 24px 160px; position: relative; }
+.chat-intro {
+  text-align: center; padding: 20px 0 40px;
+  border-bottom: 1px dashed rgba(209,74,42,0.2);
+  margin-bottom: 32px;
+}
+.chat-intro .ey {
+  font-family: var(--sd); font-size: 0.65rem; letter-spacing: 0.32em;
+  color: var(--p); text-transform: uppercase; font-weight: 500; margin-bottom: 12px;
+}
+.chat-intro h1 {
+  font-family: var(--sj); font-size: clamp(1.4rem, 4vw, 1.9rem);
+  font-weight: 700; letter-spacing: 0.02em; line-height: 1.55; margin-bottom: 14px;
+}
+.chat-intro p {
+  font-size: 0.82rem; color: var(--ts); line-height: 1.9;
+  max-width: 480px; margin: 0 auto;
+}
+
+.turn {
+  display: flex; flex-direction: column; gap: 18px;
+  margin-bottom: 28px;
+  opacity: 0; transform: translateY(12px);
+  animation: turnIn 0.5s cubic-bezier(.2,.8,.2,1) forwards;
+}
+@keyframes turnIn { to { opacity: 1; transform: translateY(0); } }
+
+.bot-row { display: flex; align-items: flex-start; gap: 12px; max-width: 100%; }
+.bot-av {
+  flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--p), var(--pl));
+  display: flex; align-items: center; justify-content: center;
+  color: var(--w); font-family: var(--sd); font-weight: 600;
+  font-size: 0.7rem; letter-spacing: 0.08em;
+  box-shadow: 0 4px 14px rgba(209,74,42,0.25);
+}
+.bot-bubble {
+  background: var(--w);
+  border: 1px solid rgba(209,74,42,0.14);
+  border-radius: 4px 18px 18px 18px;
+  padding: 18px 22px; max-width: 84%;
+  box-shadow: 0 2px 14px rgba(209,74,42,0.05);
+  position: relative;
+}
+.bot-name {
+  font-family: var(--sd); font-size: 0.58rem; letter-spacing: 0.22em;
+  color: var(--p); text-transform: uppercase; font-weight: 500; margin-bottom: 6px;
+}
+.bot-bubble p {
+  font-size: 0.88rem; line-height: 1.85; color: var(--t);
+  font-weight: 500; font-family: var(--sj); letter-spacing: 0.02em;
+}
+.bot-bubble p + p {
+  margin-top: 8px; font-family: inherit; font-weight: 400;
+  font-size: 0.78rem; color: var(--ts); line-height: 1.8;
+}
+
+.opts {
+  display: flex; flex-wrap: wrap; gap: 10px;
+  padding-left: 52px;
+  animation: optsIn 0.45s ease 0.15s both;
+}
+@keyframes optsIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.opt {
+  background: var(--w);
+  border: 1px solid rgba(209,74,42,0.25);
+  color: var(--t);
+  padding: 12px 20px; border-radius: 999px;
+  font-size: 0.82rem; font-weight: 500; font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(.2,.8,.2,1);
+  display: inline-flex; align-items: center; gap: 8px;
+  letter-spacing: 0.02em;
+}
+.opt:hover {
+  background: rgba(209,74,42,0.06);
+  border-color: var(--p);
+  color: var(--p);
+  transform: translateY(-1px);
+}
+.opt.selected {
+  background: var(--p); color: var(--w);
+  border-color: var(--p);
+  box-shadow: 0 4px 14px rgba(209,74,42,0.28);
+}
+.opt.selected:hover { background: var(--p); color: var(--w); }
+
+.opts.grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+@media (max-width: 480px) { .opts.grid { grid-template-columns: 1fr; } }
+.opts.grid .opt { justify-content: center; }
+
+.user-row { display: flex; justify-content: flex-end; animation: userIn 0.4s cubic-bezier(.2,.8,.2,1); }
+@keyframes userIn { from { opacity: 0; transform: translateY(8px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+.user-bubble {
+  background: var(--p); color: var(--w);
+  padding: 13px 20px; border-radius: 18px 18px 4px 18px;
+  font-size: 0.86rem; font-weight: 500;
+  box-shadow: 0 4px 14px rgba(209,74,42,0.22);
+  max-width: 80%; letter-spacing: 0.02em;
+}
+
+.typing-row { display: flex; gap: 12px; align-items: flex-start; }
+.typing {
+  background: var(--w);
+  border: 1px solid rgba(209,74,42,0.14);
+  border-radius: 4px 18px 18px 18px;
+  padding: 16px 20px;
+  display: inline-flex; gap: 5px; align-items: center;
+  box-shadow: 0 2px 14px rgba(209,74,42,0.05);
+}
+.typing span {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--pl);
+  animation: dot 1.2s infinite ease-in-out;
+}
+.typing span:nth-child(2) { animation-delay: 0.15s; }
+.typing span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes dot {
+  0%, 60%, 100% { opacity: 0.35; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-3px); }
+}
+
+.final { text-align: center; padding: 40px 20px 0; animation: turnIn 0.6s cubic-bezier(.2,.8,.2,1); }
+.final-icon {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--p), var(--pl));
+  display: inline-flex; align-items: center; justify-content: center;
+  margin-bottom: 24px;
+  box-shadow: 0 8px 24px rgba(209,74,42,0.3);
+}
+.final-icon svg { width: 26px; height: 26px; stroke: var(--w); }
+.final .ey {
+  font-family: var(--sd); font-size: 0.68rem; letter-spacing: 0.32em;
+  color: var(--p); text-transform: uppercase; font-weight: 500; margin-bottom: 14px;
+}
+.final h2 {
+  font-family: var(--sj); font-size: clamp(1.5rem, 4.2vw, 2rem);
+  font-weight: 700; line-height: 1.55; margin-bottom: 18px; letter-spacing: 0.02em;
+}
+.final p {
+  font-size: 0.88rem; color: var(--ts); line-height: 2;
+  max-width: 440px; margin: 0 auto 36px;
+}
+
+.form-card {
+  background: var(--w); border: 1px solid var(--bd);
+  border-radius: 8px; padding: 36px 28px;
+  max-width: 480px; margin: 0 auto;
+  text-align: left;
+  box-shadow: 0 8px 32px rgba(209,74,42,0.08);
+}
+.form-card h3 {
+  font-family: var(--sj); font-size: 1.05rem; font-weight: 600;
+  margin-bottom: 20px; letter-spacing: 0.03em;
+  padding-bottom: 14px; border-bottom: 1px solid var(--bd);
+}
+.form-field { margin-bottom: 18px; }
+.form-field label {
+  display: block; font-size: 0.72rem; font-weight: 600;
+  color: var(--ts); margin-bottom: 8px; letter-spacing: 0.08em;
+}
+.form-field input {
+  width: 100%; padding: 12px 14px;
+  border: 1px solid var(--bd); border-radius: 6px;
+  font-size: 0.88rem; font-family: inherit;
+  color: var(--t); background: var(--bg1);
+  transition: border-color 0.2s, background 0.2s;
+}
+.form-field input:focus {
+  outline: none; border-color: var(--p); background: var(--w);
+}
+.form-submit {
+  width: 100%; background: var(--p); color: var(--w);
+  border: none; padding: 16px; border-radius: 999px;
+  font-size: 0.92rem; font-weight: 700; font-family: inherit;
+  cursor: pointer; margin-top: 8px; letter-spacing: 0.05em;
+  box-shadow: 0 6px 20px rgba(209,74,42,0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+}
+.form-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(209,74,42,0.36);
+}
+.form-note {
+  font-size: 0.68rem; color: var(--tl); text-align: center;
+  margin-top: 14px; letter-spacing: 0.04em;
+}
+
+.summary {
+  max-width: 480px; margin: 0 auto 28px;
+  background: rgba(209,74,42,0.05);
+  border: 1px dashed rgba(209,74,42,0.25);
+  border-radius: 8px; padding: 18px 22px;
+  text-align: left;
+}
+.summary-ttl {
+  font-family: var(--sd); font-size: 0.62rem;
+  letter-spacing: 0.22em; color: var(--p);
+  text-transform: uppercase; margin-bottom: 10px; font-weight: 500;
+}
+.summary-list { display: flex; flex-direction: column; gap: 6px; }
+.summary-row {
+  display: flex; justify-content: space-between; gap: 12px;
+  font-size: 0.76rem; padding: 4px 0;
+}
+.summary-row .k { color: var(--ts); }
+.summary-row .v { color: var(--t); font-weight: 600; }
+
+.ft { text-align: center; padding: 24px; font-size: 0.66rem; color: var(--tl); letter-spacing: 0.08em; }
+
+@media (max-width: 480px) {
+  .chat { padding: 24px 16px 120px; }
+  .pg { padding: 16px 16px 0; }
+  .hd-in { padding: 14px 16px; }
+  .bot-bubble { padding: 14px 16px; max-width: 88%; }
+  .bot-bubble p { font-size: 0.82rem; }
+  .opts { padding-left: 0; }
+  .form-card { padding: 28px 20px; }
+  .chat-intro h1 { font-size: 1.25rem; }
+  .chat-intro p { font-size: 0.78rem; }
+}
+</style>
+</head>
+<body>
+
+<header class="hd">
+  <div class="hd-in">
+    <a href="index.html" class="hd-logo"><img src="logo.png" alt="可能性ラボ"></a>
+    <a href="index.html" class="hd-back">← 戻る</a>
+  </div>
+</header>
+
+<div class="pg">
+  <div class="pg-labels">
+    <div class="pg-step" id="pgStep">STEP 01 / 05</div>
+    <div class="pg-count"><span class="cur" id="pgCur">1</span> / 5</div>
+  </div>
+  <div class="pg-bar"><div class="pg-bar-fill" id="pgFill"></div></div>
+</div>
+
+<main class="chat" id="chat">
+  <div class="chat-intro">
+    <div class="ey">INTERN ENTRY</div>
+    <h1>まずは、あなたのことを<br>少しだけ教えてください。</h1>
+    <p>所要時間は約1分。回答はあなたに合ったインターンプログラムをご案内するために使用します。</p>
+  </div>
+</main>
+
+<div class="ft">© Kanousei Lab</div>
+
+<script>
+const QUESTIONS = [
+  {
+    id: 'year',
+    title: '現在の学年を教えてください。',
+    sub: '学年に応じて、おすすめのプログラム時期をご提案します。',
+    options: ['大学1年生', '大学2年生', '大学3年生', '大学4年生', '修士1年', '修士2年', 'その他'],
+    grid: true,
+  },
+  {
+    id: 'field',
+    title: '興味のある領域はありますか？',
+    sub: '複数の選択肢から直感で一番近いものを選んでください。',
+    options: ['ビジネス・事業開発', '営業・セールス', 'マーケティング', 'エンジニアリング', 'デザイン', 'コンサル・戦略', '人事・組織', '広報・PR', '企画・プランニング', 'まだ決まっていない', 'その他'],
+    grid: true,
+  },
+  {
+    id: 'motivation',
+    title: '参加を考えたきっかけは？',
+    sub: 'あなたの今のモヤモヤを教えてください。',
+    options: ['就活に向けて自分を知りたい', 'ガクチカになる経験が欲しい', '社会人と働いてみたい', '志望業界を見極めたい', '自分の強みを言語化したい', '何となく興味がある'],
+    grid: true,
+  },
+  {
+    id: 'status',
+    title: '現在の状況に近いものは？',
+    sub: '学業やバイトとの両立も相談可能です。',
+    options: ['学生（通学中）', '学生（休学中）', '新卒（社会人1年目）', '就活浪人中', 'その他'],
+    grid: true,
+  },
+  {
+    id: 'location',
+    title: '現在のお住まいはどちらですか？',
+    sub: 'オンライン・対面どちらでもご参加いただけます。',
+    options: ['関東', '関西', '東海', '北海道・東北', '中国・四国', '九州・沖縄', '甲信越・北陸', '海外'],
+    grid: true,
+  },
+];
+
+const state = { answers: {}, cur: 0 };
+const chat = document.getElementById('chat');
+
+function updateProgress() {
+  const step = state.cur + 1;
+  const total = QUESTIONS.length;
+  document.getElementById('pgStep').textContent = `STEP ${String(Math.min(step, total)).padStart(2, '0')} / ${String(total).padStart(2, '0')}`;
+  document.getElementById('pgCur').textContent = Math.min(step, total);
+  const pct = state.cur >= total ? 100 : (state.cur / total) * 100;
+  document.getElementById('pgFill').style.width = pct + '%';
+}
+
+function showTyping() {
+  const wrap = document.createElement('div');
+  wrap.className = 'turn';
+  wrap.innerHTML = `
+    <div class="typing-row">
+      <div class="bot-av">LAB</div>
+      <div class="typing"><span></span><span></span><span></span></div>
+    </div>
+  `;
+  chat.appendChild(wrap);
+  window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});
+  return wrap;
+}
+
+function askQuestion(idx) {
+  if (idx >= QUESTIONS.length) { showFinal(); return; }
+  const q = QUESTIONS[idx];
+  updateProgress();
+
+  const typing = showTyping();
+  setTimeout(() => {
+    typing.remove();
+    const turn = document.createElement('div');
+    turn.className = 'turn';
+    turn.id = 'turn-' + q.id;
+    turn.innerHTML = `
+      <div class="bot-row">
+        <div class="bot-av">LAB</div>
+        <div class="bot-bubble">
+          <div class="bot-name">KANOUSEI LAB</div>
+          <p>${q.title}</p>
+          ${q.sub ? `<p>${q.sub}</p>` : ''}
+        </div>
+      </div>
+      <div class="opts ${q.grid ? 'grid' : ''}">
+        ${q.options.map(opt => `<button class="opt" data-val="${opt}">${opt}</button>`).join('')}
+      </div>
+    `;
+    chat.appendChild(turn);
+    window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});
+    turn.querySelectorAll('.opt').forEach(btn => {
+      btn.addEventListener('click', () => handleAnswer(q, btn));
+    });
+  }, 650);
+}
+
+function handleAnswer(q, btn) {
+  const val = btn.dataset.val;
+  const turn = document.getElementById('turn-' + q.id);
+  turn.querySelectorAll('.opt').forEach(b => {
+    b.classList.remove('selected');
+    b.disabled = true;
+    b.style.pointerEvents = 'none';
+  });
+  btn.classList.add('selected');
+  state.answers[q.id] = val;
+
+  setTimeout(() => {
+    turn.querySelectorAll('.opt:not(.selected)').forEach(b => {
+      b.style.transition = 'opacity 0.3s, transform 0.3s';
+      b.style.opacity = '0.35';
+      b.style.transform = 'scale(0.96)';
+    });
+    const userRow = document.createElement('div');
+    userRow.className = 'user-row';
+    userRow.innerHTML = `<div class="user-bubble">${val}</div>`;
+    turn.appendChild(userRow);
+    window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});
+    state.cur++;
+    setTimeout(() => askQuestion(state.cur), 500);
+  }, 200);
+}
+
+function labelFor(id) {
+  return {
+    year: '学年',
+    field: '興味のある領域',
+    motivation: '参加きっかけ',
+    status: '現在の状況',
+    location: 'お住まい',
+  }[id];
+}
+
+function showFinal() {
+  updateProgress();
+  const typing = showTyping();
+  setTimeout(() => {
+    typing.remove();
+    const turn = document.createElement('div');
+    turn.className = 'turn';
+    turn.innerHTML = `
+      <div class="bot-row">
+        <div class="bot-av">LAB</div>
+        <div class="bot-bubble">
+          <div class="bot-name">KANOUSEI LAB</div>
+          <p>ありがとうございます。<br>最後に、ご連絡先を教えてください。</p>
+          <p>ご入力いただいた内容をもとに、担当より1営業日以内にご連絡いたします。</p>
+        </div>
+      </div>
+    `;
+    chat.appendChild(turn);
+
+    const finalWrap = document.createElement('div');
+    finalWrap.className = 'final';
+    const summaryRows = Object.entries(state.answers)
+      .map(([k, v]) => `<div class="summary-row"><span class="k">${labelFor(k)}</span><span class="v">${v}</span></div>`)
+      .join('');
+
+    finalWrap.innerHTML = `
+      <div class="summary">
+        <div class="summary-ttl">YOUR ANSWERS</div>
+        <div class="summary-list">${summaryRows}</div>
+      </div>
+      <div class="form-card">
+        <h3>ご連絡先の入力</h3>
+        <form onsubmit="event.preventDefault(); submitForm();">
+          <div class="form-field">
+            <label>お名前</label>
+            <input type="text" id="fName" placeholder="山田 太郎" required>
+          </div>
+          <div class="form-field">
+            <label>大学名</label>
+            <input type="text" id="fUniv" placeholder="〇〇大学 〇〇学部">
+          </div>
+          <div class="form-field">
+            <label>メールアドレス</label>
+            <input type="email" id="fEmail" placeholder="example@mail.com" required>
+          </div>
+          <div class="form-field">
+            <label>電話番号（任意）</label>
+            <input type="tel" id="fPhone" placeholder="090-0000-0000">
+          </div>
+          <button type="submit" class="form-submit">
+            エントリーを完了する
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </button>
+          <p class="form-note">送信内容はプライバシーポリシーに基づき取り扱います。</p>
+        </form>
+      </div>
+    `;
+    chat.appendChild(finalWrap);
+    window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});
+  }, 700);
+}
+
+function submitForm() {
+  const name = document.getElementById('fName').value.trim();
+  if (!name) return;
+  const chat = document.getElementById('chat');
+  chat.innerHTML = `
+    <div class="final">
+      <div class="final-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+      </div>
+      <div class="ey">THANK YOU</div>
+      <h2>${name}さん、<br>エントリーありがとうございました。</h2>
+      <p>ご入力いただいたメールアドレス宛に、1営業日以内に担当よりご連絡いたします。一緒に「可能性のスタート地点」を見つけましょう。</p>
+      <a href="index.html" style="display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:999px;background:var(--p);color:var(--w);text-decoration:none;font-weight:600;font-size:0.88rem;box-shadow:0 6px 20px rgba(209,74,42,0.3);letter-spacing:0.04em;">
+        トップページへ戻る
+      </a>
+    </div>
+  `;
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+setTimeout(() => askQuestion(0), 400);
+updateProgress();
+</script>
+</body>
+</html>
