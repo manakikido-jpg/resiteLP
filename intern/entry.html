@@ -532,9 +532,43 @@ function showFinal() {
   }, 700);
 }
 
+// Netlify Forms にリードを送信する。フォーム名は静的検出用フォーム（body内 hidden）と一致させること。
+const FORM_NAME = 'intern-entry';
+
 function submitForm() {
   const name = document.getElementById('fName').value.trim();
   if (!name) return;
+
+  const btn = document.querySelector('.form-submit');
+  if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; btn.style.pointerEvents = 'none'; }
+
+  // 連絡先＋診断回答（q_<id>）をまとめて送信
+  const payload = {
+    'form-name': FORM_NAME,
+    'bot-field': '',
+    name: name,
+    university: document.getElementById('fUniv').value.trim(),
+    email: document.getElementById('fEmail').value.trim(),
+    phone: document.getElementById('fPhone').value.trim(),
+  };
+  Object.entries(state.answers).forEach(([k, v]) => { payload['q_' + k] = v; });
+
+  fetch('/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams(payload).toString(),
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error('送信に失敗しました (HTTP ' + res.status + ')');
+      showThankYou(name);
+    })
+    .catch((err) => {
+      console.error('[entry] submit failed:', err);
+      showSubmitError(btn);
+    });
+}
+
+function showThankYou(name) {
   const chat = document.getElementById('chat');
   chat.innerHTML = `
     <div class="final">
@@ -552,8 +586,36 @@ function submitForm() {
   window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
+// 送信失敗時：データを失わないよう、再送信できる状態に戻して明示的に知らせる
+function showSubmitError(btn) {
+  if (btn) { btn.disabled = false; btn.style.opacity = ''; btn.style.pointerEvents = ''; }
+  let note = document.getElementById('submitError');
+  if (!note) {
+    note = document.createElement('p');
+    note.id = 'submitError';
+    note.style.cssText = 'color:#d14a2a;font-size:0.85rem;margin-top:12px;text-align:center;';
+    const form = document.querySelector('.form-card form');
+    if (form) form.appendChild(note);
+  }
+  note.textContent = '送信に失敗しました。通信環境をご確認のうえ、もう一度お試しください。';
+}
+
 setTimeout(() => askQuestion(0), 400);
 updateProgress();
 </script>
+
+<!-- Netlify Forms 検出用の静的フォーム（非表示）。実際の送信は上の submitForm() が fetch で行う。 -->
+<form name="intern-entry" data-netlify="true" netlify-honeypot="bot-field" hidden>
+  <input type="text" name="name" />
+  <input type="text" name="university" />
+  <input type="email" name="email" />
+  <input type="tel" name="phone" />
+  <input type="text" name="q_year" />
+  <input type="text" name="q_field" />
+  <input type="text" name="q_motivation" />
+  <input type="text" name="q_status" />
+  <input type="text" name="q_location" />
+  <input type="text" name="bot-field" />
+</form>
 </body>
 </html>

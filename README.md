@@ -35,10 +35,31 @@
 
 各種 `.svg`（推奨・無限スケール）と `.png`（1x / 2x / 4x）を用意。Web では SVG を優先してください。
 
-## フォーム（リード獲得）
+## フォーム（リード獲得）— Netlify Forms 連携
 
-- `intern/entry.html`（エントリー）と `mid-career/diagnosis.html`（診断予約）に入力フォームがあります。
-- **送信先（バックエンド連携）の設定状況は本 README の更新で管理します。** ← 連携実装後にここを更新。
+`intern/entry.html`（エントリー）と `mid-career/diagnosis.html`（診断予約）の送信を
+**Netlify Forms** に連携済みです。送信されたリードは各 Netlify サイトの管理画面
+（**Forms** タブ）に蓄積され、CSV 出力・メール通知が可能です。
+
+| ページ | フォーム名 | 収集項目 |
+|---|---|---|
+| `intern/entry.html` | `intern-entry` | 氏名 / 大学 / メール / 電話 ＋ 診断回答（`q_year`, `q_field`, `q_motivation`, `q_status`, `q_location`） |
+| `mid-career/diagnosis.html` | `midcareer-diagnosis` | 氏名 / メール / 電話 ＋ 診断回答（`q_experience`, `q_age`, `q_status`, `q_location`） |
+
+### 仕組み
+- 各ページの `<body>` 末尾に **検出用の静的フォーム（`hidden`）** を置き、Netlify がデプロイ時にフォームを認識します。
+- 実際の送信はチャット UI の `submitForm()` が `fetch('/')` で Netlify に POST します（既存の入力体験はそのまま）。
+- スパム対策に honeypot（`bot-field`）を設定済み。送信失敗時はリードを失わないようエラー表示＋再送信可能にしています。
+
+### ⚠️ デプロイ後に必要な設定（Netlify 管理画面）
+1. 対象サイトを **再デプロイ**（フォーム検出はデプロイ時に行われるため必須）。
+2. **Site configuration → Forms** でフォームが登録されたことを確認。
+3. **Forms → Form notifications → Add notification → Email notification** で
+   リードの**通知先メールアドレス**を設定（※コードではなく管理画面で設定する項目）。
+4. 送信テストを行い、管理画面に届くことを確認。
+
+> 補足: Netlify Forms はローカル（`file://` や `netlify dev` 以外）では動作しません。
+> 実際の挙動確認は本番／プレビューのデプロイ環境で行ってください。無料枠は月100送信まで。
 
 ## デプロイ
 
