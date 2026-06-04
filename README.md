@@ -11,26 +11,21 @@
 | `mid-career/` | 中途・転職向け LP ＋ 診断予約 | `index.html`, `diagnosis.html`, `booking.html`, `logo.png` |
 | `booking/` | 面談予約ページ（単体） | `index.html` |
 | `type-test/` | 適性タイプ診断（未着手） | （空） |
-| `logo-assets/` | ブランドキット（ロゴ・シンボル一式） | SVG / PNG（1x/2x/4x） |
+| `logo-assets/` | ブランドロゴ（正本） | `kanousei_labo_logo.png` |
 
 ## ブランドアセットの運用ルール
 
-- **正本（source of truth）は `logo-assets/`** です。色・ロゴの変更は必ずここを起点に行います。
-- 各サイトは独立デプロイ（公開フォルダがサブフォルダ単位）のため、親フォルダの `logo-assets/` を参照できません。
-  そのため各サイトフォルダ内の `logo.png` は **`logo-assets/` からの複製** です。
-- ロゴを差し替える際は、`logo-assets/` を更新したうえで各サイトの `logo.png` も同期してください。
-  - `intern/logo.png` ＝ `mid-career/logo.png` ＝ `logo-assets/toumei-01.png`（透過ロゴ・同一）
+- **正本（source of truth）は `logo-assets/kanousei_labo_logo.png`** です。ロゴの変更は必ずここを起点に行います。
+- 各サイトは独立公開（公開フォルダがサブフォルダ単位）のため、親フォルダの `logo-assets/` を参照できません。
+  そのため各サイトフォルダ内の `logo.png` は **`logo-assets/kanousei_labo_logo.png` からの複製** です。
+- ロゴを差し替える際は、`logo-assets/kanousei_labo_logo.png` を更新したうえで各サイトの `logo.png` も同期してください。
+  - `intern/logo.png` ＝ `mid-career/logo.png` ＝ `logo-assets/kanousei_labo_logo.png`（同一）
 
-### logo-assets の種類
-
-| 種別 | 用途 |
-|---|---|
-| `logo-primary` | 通常背景用フルロゴ |
-| `logo-white` | 濃色背景用フルロゴ |
-| `logo-mono-ink` / `logo-mono-sky` | モノクロ／単色フルロゴ |
-| `symbol-*` | シンボルマーク（アイコン）単体 |
-
-各種 `.svg`（推奨・無限スケール）と `.png`（1x / 2x / 4x）を用意。Web では SVG を優先してください。
+```bash
+# ロゴ同期の例（リポジトリ直下で実行）
+cp logo-assets/kanousei_labo_logo.png intern/logo.png
+cp logo-assets/kanousei_labo_logo.png mid-career/logo.png
+```
 
 ## フォーム（リード獲得）— Netlify Forms 連携
 
