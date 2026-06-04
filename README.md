@@ -10,7 +10,7 @@
 | `intern/` | 学生インターン向け LP ＋ エントリー | `index.html`, `entry.html`, `logo.png` |
 | `mid-career/` | 中途・転職向け LP ＋ 診断予約 | `index.html`, `diagnosis.html`, `booking.html`, `logo.png` |
 | `booking/` | 面談予約ページ（単体） | `index.html` |
-| `type-test/` | 適性タイプ診断（未着手） | （空） |
+| `type-test/` | 職業タイプ診断（16タイプ） | `index.html`, `css/`, `js/`, `logo.png` |
 | `logo-assets/` | ブランドロゴ（正本） | `kanousei_labo_logo.png` |
 
 ## ブランドアセットの運用ルール
@@ -67,4 +67,26 @@ netlify deploy --prod
 
 - `booking/index.html` と `mid-career/booking.html` は同一内容（各 約29.7MB）。
   画像/動画が base64 で埋め込まれており重いため、将来的に外部ファイル化（軽量化）の余地あり。
-- `type-test/` は枠だけ確保済み（適性診断ページの予定）。
+
+## type-test（職業タイプ診断）
+
+`type-test/` は他のLP（1ファイル完結型）と異なり、**HTML / CSS / JS を分離**した構成です。
+20問の対話型診断で、4軸×2極の組み合わせから **16タイプ** を判定します。
+
+```
+type-test/
+├── index.html          # ページ本体（マウント先のみ。中身は app.js が描画）
+├── logo.png
+├── css/
+│  └── style.css        # ブランド準拠スタイル（紫系・mid-career に統一）
+└── js/
+   ├── questions.js     # 20問の質問データ（4軸×5問）
+   ├── types.js         # 16タイプ定義（TYPE_DEFINITIONS）＋ 軸ラベル
+   ├── calculator.js    # スコア計算・型判定・確度（仕様書ロジックを移植）
+   └── app.js           # 画面遷移（intro→questions→result）と描画
+```
+
+- **判定ロジック**: 各軸 `(ポジ側得点 / 総得点)×100`、50%閾値で型を二分 → 4文字コード（例 `ETOP`）。確度＝各軸の中立(50)からの平均乖離×2。
+- **結果**: タイプ名・英名・絵文字・blurb・強み3点・4軸スコアバー・確度を表示。`localStorage` に保存、JSON出力／コピー可。
+- スクリプトは依存順（questions → types → calculator → app）で読み込む純粋なグローバル構成（ビルド不要）。
+- **未設定**: 結果画面の「無料で相談してみる」CTA（`a[data-cta="consult"]`）の遷移先は `#`。相談/予約ページのURLが決まったら差し替える。
