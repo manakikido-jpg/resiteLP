@@ -1,20 +1,17 @@
 # 可能性ラボ / 可能性LABO — LP リポジトリ
 
 キャリア設計サービス「可能性ラボ」のランディングページ（LP）一式を管理するリポジトリです。
-各ディレクトリは **それぞれ独立した Netlify サイト** としてデプロイされています。
+各ディレクトリは **それぞれ独立した 1 サイト** として公開する構成です。
 
 ## ディレクトリ構成
 
-| ディレクトリ | 役割 | 主なファイル | Netlify Site ID |
-|---|---|---|---|
-| `intern/` | 学生インターン向け LP ＋ エントリー | `index.html`, `entry.html`, `logo.png` | `aa579145-4734-4f0c-9e2e-45e7faaefa59` |
-| `mid-career/` | 中途・転職向け LP ＋ 診断予約 | `index.html`, `diagnosis.html`, `booking.html`, `logo.png` | `30b1277a-d11b-4ee9-9f70-0eecec5432e8` |
-| `booking/` | 面談予約ページ（単体） | `index.html` | `e6466b70-c34a-4590-ae8c-0a53da98bcd9` |
-| `type-test/` | 適性タイプ診断（未着手） | （空） | `5a1c19b1-8e3d-4c07-8f30-f5e863253362` |
-| `logo-assets/` | ブランドキット（ロゴ・シンボル一式） | SVG / PNG（1x/2x/4x） | — |
-
-> Site ID は Netlify 上の各サイトに再リンクするためのキーです（`.netlify/` は Git 管理外のため、ここに控えています）。
-> Vercel プロジェクト: `kanousei-labo-lp`（projectId: `prj_u55GwTRnzbFdlOCurFkkbusNNoak`）
+| ディレクトリ | 役割 | 主なファイル |
+|---|---|---|
+| `intern/` | 学生インターン向け LP ＋ エントリー | `index.html`, `entry.html`, `logo.png` |
+| `mid-career/` | 中途・転職向け LP ＋ 診断予約 | `index.html`, `diagnosis.html`, `booking.html`, `logo.png` |
+| `booking/` | 面談予約ページ（単体） | `index.html` |
+| `type-test/` | 適性タイプ診断（未着手） | （空） |
+| `logo-assets/` | ブランドキット（ロゴ・シンボル一式） | SVG / PNG（1x/2x/4x） |
 
 ## ブランドアセットの運用ルール
 
