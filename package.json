@@ -1,0 +1,9 @@
+{
+  "name": "kanousei-labo-sites",
+  "private": true,
+  "version": "0.1.0",
+  "description": "可能性LABO 全サイト（プロファイル管理 / 予約 / マイページ / 職業タイプ診断 / LP）の統合デプロイ",
+  "scripts": {
+    "build": "node scripts/build-vercel.mjs"
+  }
+}

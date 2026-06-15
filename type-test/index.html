@@ -3,44 +3,143 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>職業タイプ診断｜可能性ラボ</title>
-<meta name="description" content="20の質問で、あなたの「働き方の本質」を16タイプで診断。4つの軸からあなたの強みを言語化します。可能性ラボのキャリアタイプ診断。">
+<title>職業タイプ診断｜可能性LABO</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=Shippori+Mincho:wght@400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Reggae+One&family=Shippori+Mincho:wght@500;600;700;800&family=Noto+Sans+JP:wght@500;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
 </head>
 <body>
 
-  <!-- ヘッダー -->
-  <header class="hd">
-    <div class="hd-in">
-      <a href="index.html" class="hd-logo"><img src="logo.png" alt="可能性ラボ"></a>
-      <span class="hd-tag">Career Type Diagnosis</span>
-    </div>
-  </header>
-
-  <!-- プログレス（質問中のみ表示。app.js が制御） -->
-  <div class="pg" id="progress" style="display:none;">
-    <div class="pg-labels">
-      <span class="pg-step">Question</span>
-      <span class="pg-count" id="progressCount"></span>
-    </div>
-    <div class="pg-bar"><div class="pg-bar-fill" id="progressFill"></div></div>
+<header class="hd">
+  <div class="hd-in">
+    <a href="../v4_white.html" class="hd-logo">可能性<b>LABO</b></a>
+    <a href="../v4_white.html" class="hd-back">← TOPへ戻る</a>
   </div>
+</header>
 
-  <!-- 画面マウント先 -->
-  <main class="stage" id="stage"><!-- app.js が intro / question / result を描画 --></main>
+<main id="app"></main>
 
-  <!-- フッター -->
-  <footer class="ft">
-    可能性ラボ — 職業タイプ診断
-  </footer>
+<div class="ft">© 可能性LABO — Career Type Test</div>
 
-  <!-- 依存順に読み込み（モジュールではなくグローバル前提） -->
-  <script src="js/questions.js"></script>
-  <script src="js/types.js"></script>
-  <script src="js/calculator.js"></script>
-  <script src="js/app.js"></script>
+<script src="js/data.js"></script>
+<script src="js/result.js"></script>
+<script>
+const TT = window.TYPETEST;
+const TT_QUESTIONS = TT.QUESTIONS, TT_SCALE = TT.SCALE, ttScore = TT.scoreAnswers;
+
+const CHAPTERS = [
+  { sec:'才能',   en:'TALENT',  axis:'戦略 ⇔ 共感',   desc:'あなたが自然と発揮している"強み"の方向を見ます。' },
+  { sec:'働き方', en:'STYLE',   axis:'チーム ⇔ 個人', desc:'人とどう関わると、力を発揮しやすいかを探ります。' },
+  { sec:'判断',   en:'JUDGE',   axis:'論理 ⇔ 直感',   desc:'迷ったときの、あなたなりの「決め方」を見ます。' },
+  { sec:'構え',   en:'OUTLOOK', axis:'楽観 ⇔ 悲観',   desc:'物事を捉えるときの、あなたの基本姿勢を見ます。' },
+];
+
+const app = document.getElementById('app');
+const SHORT = ['はい','ややそう','どちらでも','ややちがう','いいえ'];
+const state = { phase:'start', chapter:0, answers:{} };
+
+function render(){
+  if(state.phase==='start')  return renderStart();
+  if(state.phase==='finish') return renderLoading();
+  return renderChapter();
+}
+
+function renderStart(){
+  app.innerHTML = `
+    <section class="start">
+      <div class="start-badge">Career Type Test</div>
+      <h1>あなたの<span class="em">"職業タイプ"</span>を<br>引き当てる</h1>
+      <p>20の質問に5段階で答えるだけ。<br>4つの軸から、16タイプのうちのどれかを診断します。<br>あなたはどのカードを引き当てる？</p>
+      <div class="start-axes">
+        ${CHAPTERS.map(c=>{
+          const [l,r] = c.axis.split(' ⇔ ');
+          return `<div class="start-ax"><span class="p">${l}</span><span class="vs">⇔</span><span class="p">${r}</span></div>`;
+        }).join('')}
+      </div>
+      <div class="start-meta"><span>全20問</span><span>約3分</span><span>16タイプ</span></div>
+      <div><button class="btn-go" onclick="begin()">診断をはじめる</button></div>
+    </section>`;
+}
+
+function renderChapter(){
+  const c = CHAPTERS[state.chapter];
+  const startIdx = state.chapter*5;
+  const qs = TT_QUESTIONS.filter(q=>q.sec===c.sec);
+  const answered = qs.filter((_,i)=> state.answers[startIdx+i]!==undefined).length;
+
+  const rail = CHAPTERS.map((cc,i)=>{
+    const cls = i===state.chapter?'act':(i<state.chapter?'done':'');
+    return `<div class="rail-cell ${cls}"><span class="n">CH ${String(i+1).padStart(2,'0')}</span>${cc.en}</div>`;
+  }).join('');
+
+  app.innerHTML = `
+    <div class="rail">${rail}</div>
+    <section class="ch-intro">
+      <div class="ch-num">CHAPTER ${String(state.chapter+1).padStart(2,'0')} / 04</div>
+      <h2 class="ch-title">${c.sec}</h2>
+      <p class="ch-sub">${c.desc}<br>軸：<b>${c.axis}</b></p>
+    </section>
+    <section class="qlist">
+      ${qs.map((q,i)=>{
+        const idx = startIdx+i;
+        const ans = state.answers[idx];
+        const [lp,rp] = c.axis.split(' ⇔ ');
+        return `
+          <div class="qitem ${ans!==undefined?'answered':''}">
+            <div class="qitem-head"><span class="qitem-no">Q.${String(idx+1).padStart(2,'0')}</span><span class="qitem-q">${q.text}</span></div>
+            <div class="qaxis"><span class="l">あてはまる</span><span>—</span><span class="l">あてはまらない</span></div>
+            <div class="lk" data-idx="${idx}">
+              ${TT_SCALE.map((s,si)=>`<button class="lk-opt ${ans===s.val?'on':''}" data-val="${s.val}"><span class="lk-dot"></span><span class="lk-lbl lk-full">${s.label}</span><span class="lk-lbl lk-short">${SHORT[si]}</span></button>`).join('')}
+            </div>
+          </div>`;
+      }).join('')}
+    </section>
+    <div class="ch-foot">
+      <button class="ch-back" onclick="prevCh()" ${state.chapter===0?'style="visibility:hidden"':''}>← 前の章</button>
+      <div class="left"><b>${answered}</b> / 5 問 回答済み</div>
+      <button class="ch-next" id="nextBtn" ${answered<5?'disabled':''} onclick="nextCh()">${state.chapter===3?'結果を見る':'次の章へ'}</button>
+    </div>`;
+
+  document.querySelectorAll('.lk').forEach(lk=>{
+    const idx = parseInt(lk.dataset.idx,10);
+    lk.querySelectorAll('.lk-opt').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        state.answers[idx] = parseInt(btn.dataset.val,10);
+        lk.querySelectorAll('.lk-opt').forEach(b=>b.classList.remove('on'));
+        btn.classList.add('on');
+        lk.closest('.qitem').classList.add('answered');
+        const a2 = qs.filter((_,i2)=> state.answers[startIdx+i2]!==undefined).length;
+        const left = document.querySelector('.ch-foot .left');
+        const nx = document.getElementById('nextBtn');
+        if(left) left.innerHTML = `<b>${a2}</b> / 5 問 回答済み`;
+        if(nx) nx.disabled = a2<5;
+      });
+    });
+  });
+}
+
+function renderLoading(){
+  app.innerHTML = `
+    <div class="ldg">
+      <div class="ldg-box"><i></i><i></i><i></i></div>
+      <div class="ldg-tx">カードを引いています…</div>
+      <div class="ldg-sub">20の答えから、あなたのタイプを判定中</div>
+    </div>`;
+  setTimeout(()=>{
+    const result = ttScore(state.answers);
+    app.innerHTML = window.renderResult(result);
+    window.bindResult({ onRetry: ()=>{ state.phase='start'; state.chapter=0; state.answers={}; render(); window.scrollTo({top:0}); } });
+    window.scrollTo({top:0});
+  }, 1700);
+}
+
+function begin(){ state.phase='doing'; state.chapter=0; render(); window.scrollTo({top:0}); }
+function nextCh(){ if(state.chapter<3){ state.chapter++; render(); window.scrollTo({top:0,behavior:'smooth'}); } else { state.phase='finish'; render(); } }
+function prevCh(){ if(state.chapter>0){ state.chapter--; render(); window.scrollTo({top:0,behavior:'smooth'}); } }
+
+render();
+</script>
 </body>
 </html>
