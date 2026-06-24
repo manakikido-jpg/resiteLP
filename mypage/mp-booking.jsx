@@ -16,6 +16,7 @@ function Booking({ onClose, toast, accent }) {
   const [slot, setSlot] = useState(null);
   const [type, setType] = useState("第二面談");
   const [mode, setMode] = useState("オンライン");
+  const [busy, setBusy] = useState(false);
 
   const minMonth = startOfMonth(MIN_DAY);
   const maxMonth = startOfMonth(MAX_DAY);
@@ -39,9 +40,20 @@ function Booking({ onClose, toast, accent }) {
     if (step === 4) { onClose(); return; }
     setStep(step - 1);
   }
-  function confirm() {
-    setStep(4);
-    if (toast) toast("予約が完了しました");
+  async function confirm() {
+    if (busy || !day || !slot) return;
+    const at = new Date(day.getFullYear(), day.getMonth(), day.getDate(), ...slot.time.split(":").map(Number));
+    const typeCode = type === "第一面談" ? "first" : "second";
+    setBusy(true);
+    try {
+      if (window.mpBook) await window.mpBook(window.toIsoJST(at), typeCode);
+      setStep(4);
+      if (toast) toast("予約が完了しました");
+    } catch (e) {
+      if (toast) toast("予約に失敗しました。時間をおいて再度お試しください。");
+    } finally {
+      setBusy(false);
+    }
   }
 
   const selStart = day && slot ? new Date(day.getFullYear(), day.getMonth(), day.getDate(), ...slot.time.split(":").map(Number)) : null;
@@ -233,8 +245,8 @@ function Booking({ onClose, toast, accent }) {
               </div>
             </div>
             <div className="book-footer">
-              <button className="btn btn-lg" onClick={() => setStep(2)}>戻る</button>
-              <button className="btn btn-grad btn-lg flex2" onClick={confirm}>この内容で予約する</button>
+              <button className="btn btn-lg" onClick={() => setStep(2)} disabled={busy}>戻る</button>
+              <button className="btn btn-grad btn-lg flex2" onClick={confirm} disabled={busy}>{busy ? "送信中…" : "この内容で予約する"}</button>
             </div>
           </>
         )}

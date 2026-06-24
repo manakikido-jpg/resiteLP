@@ -774,3 +774,12 @@ input, textarea, select { font-family: inherit; }
 .stage-lost{margin-left:14px;background:none;border:1px solid var(--line);border-radius:var(--r-pill);cursor:pointer;font-size:11.5px;color:var(--ink-3);padding:5px 13px;}
 .stage-lost:hover{border-color:var(--ink-3);color:var(--ink-2);}
 .stage-lost.on{background:var(--surface-2);border-color:var(--ink-3);color:var(--ink-2);font-weight:600;}
+
+/* ===== 管理ログイン ===== */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--bg);}
+.login-card{width:100%;max-width:380px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:34px 30px;display:flex;flex-direction:column;gap:14px;}
+.login-logo{width:46px;height:46px;margin:0 auto 4px;display:block;}
+.login-title{font-size:18px;font-weight:700;text-align:center;color:var(--ink);}
+.login-sub{font-size:12.5px;color:var(--ink-3);text-align:center;margin-top:-8px;margin-bottom:6px;}
+.login-err{font-size:12.5px;color:var(--t-warn-fg,#a9772a);background:var(--t-warn-bg,#faf0dd);border-radius:var(--r-sm);padding:9px 12px;}
+.login-btn{width:100%;justify-content:center;height:46px;margin-top:4px;}

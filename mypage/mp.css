@@ -440,3 +440,11 @@ a { color: inherit; }
   .mp-body > *:nth-child(6) { animation-delay: .2s; }
   @keyframes rise { from { opacity: 0; transform: translateY(10px); } }
 }
+
+/* ===== 読み込み中 / エラー（中央表示） ===== */
+.mp-center{ min-height:70vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:40px 28px; gap:14px; }
+.mp-spinner{ width:34px; height:34px; border-radius:50%; border:3px solid var(--brand-tint-2); border-top-color:var(--brand); animation:mp-spin .8s linear infinite; }
+@keyframes mp-spin{ to{ transform:rotate(360deg); } }
+.mp-center-ic{ width:54px; height:54px; border-radius:50%; background:var(--brand-tint); color:var(--brand-deep); display:flex; align-items:center; justify-content:center; }
+.mp-center-ttl{ font-size:17px; font-weight:800; color:var(--ink); }
+.mp-center-tx{ font-size:13px; color:var(--ink-2); line-height:1.85; max-width:300px; }

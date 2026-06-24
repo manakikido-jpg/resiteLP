@@ -22,6 +22,7 @@ import type {
 } from "../lib/types";
 import { blankCandidate } from "../lib/candidate";
 import { buildBookingRecords } from "../lib/booking";
+import { supabase } from "../lib/supabase";
 import { repository } from "./repository";
 
 export type View =
@@ -34,6 +35,14 @@ type Updater<T> = T | ((prev: T) => T);
 
 export interface AppContextValue {
   loading: boolean;
+  /** 認証の初期確認が済んだか（Supabase接続時のみ意味あり） */
+  authReady: boolean;
+  /** ログイン機能が有効か（Supabase接続時） */
+  authEnabled: boolean;
+  /** ログインが必要か（Supabase接続かつ未ログイン） */
+  needsAuth: boolean;
+  signIn: (email: string, password: string) => Promise<void>;
+  signOut: () => Promise<void>;
   candidates: Candidate[];
   appts: Appointment[];
   formFields: FormField[];
@@ -86,9 +95,46 @@ export function AppProvider({ children }: { children: ReactNode }) {
     form: null as FormConfig | null,
   });
 
-  // 初回ロード
+  // 認証（Supabase接続時のみ。localStorageモードは常にログイン済み扱い）
+  const supaMode = Boolean(supabase);
+  const [authed, setAuthed] = useState(!supaMode);
+  const [authReady, setAuthReady] = useState(!supaMode);
+
   useEffect(() => {
+    if (!supabase) return;
     let active = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (!active) return;
+      setAuthed(!!data.session);
+      setAuthReady(true);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      setAuthed(!!session);
+    });
+    return () => {
+      active = false;
+      sub.subscription.unsubscribe();
+    };
+  }, []);
+
+  const signIn = useCallback(async (email: string, password: string) => {
+    if (!supabase) return;
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+  }, []);
+  const signOut = useCallback(async () => {
+    if (!supabase) return;
+    await supabase.auth.signOut();
+    setCandidates([]);
+    setAppts([]);
+    setLoading(true);
+  }, []);
+
+  // データ初回ロード（認証済みになってから）
+  useEffect(() => {
+    if (!authed) return;
+    let active = true;
+    setLoading(true);
     repository
       .loadAll()
       .then((data) => {
@@ -105,7 +151,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return () => {
       active = false;
     };
-  }, []);
+  }, [authed]);
 
   const flush = useCallback(async () => {
     const p = pending.current;
@@ -235,6 +281,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const value: AppContextValue = {
     loading,
+    authReady,
+    authEnabled: supaMode,
+    needsAuth: supaMode && !authed,
+    signIn,
+    signOut,
     candidates,
     appts,
     formFields: formCfg.fields,

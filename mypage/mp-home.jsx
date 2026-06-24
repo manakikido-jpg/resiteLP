@@ -23,7 +23,7 @@ function NextHero({ onReschedule, toast, compact }) {
         <span className="ng-pill"><MPIcon name="video" size={14} />{NEXT.modeLabel}</span>
         <span className="ng-pill"><MPIcon name="user" size={14} />{NEXT.coach} コーチ</span>
       </div>
-      {!compact && (
+      {!compact && NEXT.url && (
         <div className="join-row">
           <MPIcon name="video" size={16} />
           <span className="url">{NEXT.url}</span>
@@ -229,8 +229,12 @@ function HomeA({ onBook, onOpenAnn, toast, items, hasNext }) {
       <Greeting />
       {hasNext ? <NextHero onReschedule={onBook} toast={toast} /> : <NextEmpty onBook={onBook} grad />}
       <QuickActions onBook={onBook} toast={toast} />
-      <div className="sec-head"><MPIcon name="coaching" size={16} /><h2>コーチングの進捗</h2><span className="line" /></div>
-      <CoachingCard />
+      {window.COACHING && (
+        <>
+          <div className="sec-head"><MPIcon name="coaching" size={16} /><h2>コーチングの進捗</h2><span className="line" /></div>
+          <CoachingCard />
+        </>
+      )}
       <div className="sec-head"><MPIcon name="bell" size={16} /><h2>お知らせ</h2><span className="line" /></div>
       <AnnouncementsFeed items={items} onOpen={onOpenAnn} />
       <BookCTA onBook={onBook} />

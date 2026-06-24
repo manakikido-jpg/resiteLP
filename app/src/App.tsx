@@ -1,12 +1,29 @@
 import { useApp } from "./store/AppStore";
 import { Icon } from "./components/ui/Icon";
+import { LoginView } from "./components/LoginView";
 import { ListView } from "./components/list/ListView";
 import { ScheduleView } from "./components/schedule/ScheduleView";
 import { FormBuilderView } from "./components/form/FormBuilderView";
 import { ProfileView } from "./components/profile/ProfileView";
 
+function Loading() {
+  return (
+    <div
+      style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}
+    >
+      <span className="saver saving">
+        <span className="dot" />
+        読み込み中…
+      </span>
+    </div>
+  );
+}
+
 export function App() {
-  const { view, toast, loading } = useApp();
+  const { view, toast, loading, authReady, needsAuth } = useApp();
+
+  if (!authReady) return <Loading />;
+  if (needsAuth) return <LoginView />;
 
   if (loading) {
     return (

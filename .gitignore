@@ -11,3 +11,5 @@ app/dist/
 Thumbs.db
 *.log
 node_modules/
+
+.vercel

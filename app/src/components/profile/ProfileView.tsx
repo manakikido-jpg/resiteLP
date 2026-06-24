@@ -46,7 +46,7 @@ function tabHasContent(c: Candidate, key: TabKey): boolean {
 }
 
 export function ProfileView({ id }: { id: string }) {
-  const { candidates, setField, saving, navigate, removeCandidate } = useApp();
+  const { candidates, setField, saving, navigate, removeCandidate, notify } = useApp();
   const [tab, setTab] = useState<TabKey>("basic");
   const c = candidates.find((x) => x.id === id);
 
@@ -80,12 +80,27 @@ export function ProfileView({ id }: { id: string }) {
   const curIdx = STAGES.findIndex((s) => s.key === curStage);
   const setStage = (s: CandidateStage) => setField(id, ["stage"], s);
 
+  const copyMypageLink = () => {
+    if (!c.reservationToken) return;
+    const url = `${window.location.origin}/mypage/?token=${c.reservationToken}`;
+    navigator.clipboard?.writeText(url).then(
+      () => notify("マイページのリンクをコピーしました"),
+      () => notify(url)
+    );
+  };
+
   return (
     <>
       <AppBar
         right={
           <>
             <Saver saving={saving} />
+            {c.reservationToken && (
+              <button className="btn btn-ghost btn-sm" onClick={copyMypageLink} title="候補者マイページのリンクをコピー">
+                <Icon name="arrowRight" size={14} />
+                マイページlink
+              </button>
+            )}
             <button className="btn btn-ghost btn-sm" onClick={onDelete}>
               削除
             </button>

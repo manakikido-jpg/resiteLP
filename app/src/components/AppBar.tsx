@@ -4,7 +4,7 @@ import { useApp } from "../store/AppStore";
 import { Icon } from "./ui/Icon";
 
 export function AppBar({ right }: { right?: ReactNode }) {
-  const { navigate, view } = useApp();
+  const { navigate, view, authEnabled, signOut } = useApp();
   const cur = view.name;
   return (
     <header className="appbar">
@@ -45,6 +45,11 @@ export function AppBar({ right }: { right?: ReactNode }) {
         </nav>
         <div className="appbar-spacer" />
         {right}
+        {authEnabled && (
+          <button className="btn btn-ghost btn-sm" onClick={() => void signOut()} title="ログアウト">
+            ログアウト
+          </button>
+        )}
       </div>
     </header>
   );
