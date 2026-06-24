@@ -11,6 +11,17 @@
 </head>
 <body>
 
+<!-- ===== PAGE LOADER ===== -->
+<div class="pl-overlay" id="plOverlay">
+  <div class="pl-stage">
+    <img class="pl-logo" src="logo.png" alt="可能性ラボ">
+    <div class="pl-prog">
+      <div class="pl-row"><span class="pl-cap">Loading</span><span class="pl-pct" id="plPct">0%</span></div>
+      <div class="pl-bar"><i id="plFill"></i></div>
+    </div>
+  </div>
+</div>
+
 <!-- HEADER -->
 <header class="header">
   <div class="logo"><img src="logo.png" alt="可能性ラボ"></div>
@@ -308,13 +319,61 @@
   </div>
 </section>
 
-<!-- ⑨ TESTIMONIALS -->
-<section class="sec tv fade-in wave-top wave-top-white"><div class="drops-light drops-sec"><div class="drop drop-1"></div><div class="drop drop-2"></div><div class="drop drop-3"></div><div class="drop drop-4"></div><div class="drop drop-5"></div></div>
-  <div class="sec-rail"><span class="rail-mark">Chapter 05 — Voices</span><span class="rail-dot"></span></div>
+<!-- ===== PRICING (Chapter 05) ===== -->
+<section class="sec pr fade-in wave-top wave-top-white">
+  <div class="sec-rail"><span class="rail-mark">Chapter 05 — Pricing</span><span class="rail-dot"></span></div>
   <div class="sec-in">
-    <div class="sec-ghost" data-label="VOICES">05</div>
+    <div class="sec-ghost" data-label="PRICING">05</div>
     <div class="st-block">
       <div class="st-num">05</div>
+      <div class="st-text">
+        <div class="ey">Pricing</div>
+        <h2 class="st">あなたの状況に合わせた<br>2つのプラン</h2>
+      </div>
+    </div>
+    <div class="pr-grid">
+      <div class="pr-plan">
+        <div class="pr-inner">
+          <div class="pr-name">スタンダードプラン</div>
+          <div class="pr-for">いま方向性だけ決めたい方へ</div>
+          <div class="pr-price"><span class="cur">¥</span><span class="amt">80,000</span></div>
+          <div class="pr-term">1ヶ月 / 全4回セッション（税込）</div>
+          <ul class="pr-list">
+            <li>自己分析・価値観の整理</li>
+            <li>市場価値診断・業界職種マッピング</li>
+            <li>キャリア方向性の決定・行動計画</li>
+            <li>成果物：キャリアプランシート</li>
+          </ul>
+          <a href="#final" class="pr-btn ghost">このプランで相談する</a>
+        </div>
+      </div>
+      <div class="pr-plan rec">
+        <div class="pr-inner">
+          <div class="pr-name">フルプラン</div>
+          <div class="pr-for">3〜6ヶ月以内に転職したい方へ</div>
+          <div class="pr-price"><span class="cur">¥</span><span class="amt">150,000</span></div>
+          <div class="pr-term">2ヶ月 / 全8回セッション（税込）</div>
+          <ul class="pr-list">
+            <li>スタンダードの内容すべて含む</li>
+            <li>職務経歴書の構成・添削</li>
+            <li>面接対策・模擬面接</li>
+            <li>内定後フォロー</li>
+          </ul>
+          <a href="#final" class="pr-btn solid">このプランで相談する</a>
+        </div>
+      </div>
+    </div>
+    <p class="pr-sub">どちらか迷ってしまう場合は、まず<b>無料相談（30分）</b>でご相談ください。</p>
+  </div>
+</section>
+
+<!-- ⑨ TESTIMONIALS -->
+<section class="sec tv fade-in wave-top wave-top-white"><div class="drops-light drops-sec"><div class="drop drop-1"></div><div class="drop drop-2"></div><div class="drop drop-3"></div><div class="drop drop-4"></div><div class="drop drop-5"></div></div>
+  <div class="sec-rail"><span class="rail-mark">Chapter 06 — Voices</span><span class="rail-dot"></span></div>
+  <div class="sec-in">
+    <div class="sec-ghost" data-label="VOICES">06</div>
+    <div class="st-block">
+      <div class="st-num">06</div>
       <div class="st-text">
         <div class="ey">Voices</div>
         <h2 class="st">利用者の声</h2>
@@ -342,11 +401,11 @@
 
 <!-- ⑩ FAQ -->
 <section class="sec fq fade-in wave-top wave-top-lav"><div class="drops-lav drops-sec"><div class="drop drop-1"></div><div class="drop drop-2"></div><div class="drop drop-3"></div><div class="drop drop-4"></div><div class="drop drop-5"></div></div>
-  <div class="sec-rail"><span class="rail-mark">Chapter 06 — FAQ</span><span class="rail-dot"></span></div>
+  <div class="sec-rail"><span class="rail-mark">Chapter 07 — FAQ</span><span class="rail-dot"></span></div>
   <div class="sec-in">
-    <div class="sec-ghost" data-label="QUESTIONS">06</div>
+    <div class="sec-ghost" data-label="QUESTIONS">07</div>
     <div class="st-block">
-      <div class="st-num">06</div>
+      <div class="st-num">07</div>
       <div class="st-text">
         <div class="ey">FAQ</div>
         <h2 class="st">よくあるご質問</h2>
@@ -378,7 +437,7 @@
 </section>
 
 <!-- ⑫ FINAL CTA -->
-<section class="fc">
+<section class="fc" id="final">
   <div class="drops-lav drops-sec"><div class="drop drop-1"></div><div class="drop drop-2"></div><div class="drop drop-3"></div><div class="drop drop-4"></div><div class="drop drop-5"></div></div>
   <div class="fc-in">
     <div style="border-left:2px solid rgba(255,255,255,0.3);padding-left:22px;text-align:left;max-width:520px;margin:0 0 24px;font-family:var(--sf);font-size:clamp(0.88rem,2vw,1.02rem);line-height:2;color:var(--tw);font-weight:300">

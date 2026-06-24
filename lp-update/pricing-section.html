@@ -1,0 +1,87 @@
+<!-- ===========================================================
+     PRICING (Chapter 05) — 料金プラン
+     設置場所：Comparison/Coaches(04) の後、Voices(旧05) の直前に挿入。
+     ※ 後続セクションの章番号を繰り上げ：Voices→06、FAQ→07
+        （.sec-rail の "Chapter 0X" / .sec-ghost / .st-num を修正）
+     依存：LP の :root トークン（--p, --bd, --t, --ts, --tl, --sj, --sd, --ss）
+     =========================================================== -->
+<style>
+.pr{ background:#FFFFFF; border-top:1px solid #E6EEF4; position:relative; overflow:hidden; }
+.pr::after{ content:''; position:absolute; bottom:-90px; right:-80px; width:380px; height:380px; background:radial-gradient(circle, rgba(42,122,184,0.06) 0%, transparent 62%); border-radius:50%; pointer-events:none; }
+.pr-grid{ display:grid; grid-template-columns:1fr 1fr; gap:0; max-width:880px; margin:8px auto 0; border:1px solid var(--bd); }
+.pr-plan{ padding:48px 40px; display:flex; flex-direction:column; position:relative; background:#fff; }
+.pr-plan + .pr-plan{ border-left:1px solid var(--bd); }
+.pr-plan.rec{ background:#F6F9FC; }
+.pr-plan.rec::before{ content:'RECOMMENDED'; position:absolute; top:0; left:0; right:0; padding:11px; text-align:center; font-family:var(--sd); font-size:0.58rem; font-weight:600; letter-spacing:0.3em; color:#fff; background:var(--p); }
+.pr-plan.rec .pr-inner{ margin-top:44px; }
+.pr-inner{ display:flex; flex-direction:column; flex:1; }
+.pr-name{ font-family:var(--sj); font-size:1.25rem; font-weight:500; color:var(--t); margin-bottom:8px; letter-spacing:0.04em; }
+.pr-for{ font-family:var(--sj); font-size:0.8rem; color:var(--ts); margin-bottom:30px; letter-spacing:0.03em; line-height:1.7; }
+.pr-price{ display:flex; align-items:baseline; gap:5px; margin-bottom:6px; }
+.pr-price .cur{ font-family:var(--sd); font-size:1.2rem; font-weight:400; color:var(--t); }
+.pr-price .amt{ font-family:var(--sd); font-size:2.8rem; font-weight:500; color:var(--t); line-height:1; letter-spacing:-0.01em; }
+.pr-term{ font-family:var(--sd); font-size:0.62rem; color:var(--tl); letter-spacing:0.16em; text-transform:uppercase; padding-bottom:28px; margin-bottom:28px; border-bottom:1px solid var(--bd); }
+.pr-list{ list-style:none; display:flex; flex-direction:column; gap:15px; margin:0 0 36px; flex:1; }
+.pr-list li{ display:flex; gap:13px; align-items:flex-start; font-family:var(--sj); font-size:0.86rem; color:var(--t); line-height:1.65; letter-spacing:0.02em; }
+.pr-list li::before{ content:''; width:7px; height:7px; margin-top:8px; flex-shrink:0; background:var(--p); transform:rotate(45deg); }
+.pr-btn{ display:flex; align-items:center; justify-content:center; gap:10px; padding:17px; font-family:var(--ss); font-weight:700; font-size:0.84rem; text-decoration:none; letter-spacing:0.06em; transition:all 0.3s; }
+.pr-btn.solid{ background:var(--p); color:#fff; }
+.pr-btn.solid:hover{ background:#173049; }
+.pr-btn.ghost{ background:transparent; color:var(--p); border:1px solid var(--p); }
+.pr-btn.ghost:hover{ background:rgba(42,122,184,0.05); }
+.pr-sub{ text-align:center; font-family:var(--sj); font-size:0.88rem; color:var(--ts); margin-top:36px; line-height:1.9; letter-spacing:0.02em; }
+.pr-sub b{ color:var(--p); font-weight:600; }
+@media (max-width:768px){
+  .pr-grid{ grid-template-columns:1fr; }
+  .pr-plan + .pr-plan{ border-left:none; border-top:1px solid var(--bd); }
+  .pr-plan{ padding:40px 28px; }
+  .pr-plan.rec{ order:-1; }
+}
+</style>
+
+<section class="sec pr fade-in wave-top wave-top-white">
+  <div class="sec-rail"><span class="rail-mark">Chapter 05 — Pricing</span><span class="rail-dot"></span></div>
+  <div class="sec-in">
+    <div class="sec-ghost" data-label="PRICING">05</div>
+    <div class="st-block">
+      <div class="st-num">05</div>
+      <div class="st-text">
+        <div class="ey">Pricing</div>
+        <h2 class="st">あなたの状況に合わせた<br>2つのプラン</h2>
+      </div>
+    </div>
+    <div class="pr-grid">
+      <div class="pr-plan">
+        <div class="pr-inner">
+          <div class="pr-name">スタンダードプラン</div>
+          <div class="pr-for">いま方向性だけ決めたい方へ</div>
+          <div class="pr-price"><span class="cur">¥</span><span class="amt">80,000</span></div>
+          <div class="pr-term">1ヶ月 / 全4回セッション（税込）</div>
+          <ul class="pr-list">
+            <li>自己分析・価値観の整理</li>
+            <li>市場価値診断・業界職種マッピング</li>
+            <li>キャリア方向性の決定・行動計画</li>
+            <li>成果物：キャリアプランシート</li>
+          </ul>
+          <a href="#final" class="pr-btn ghost">このプランで相談する</a>
+        </div>
+      </div>
+      <div class="pr-plan rec">
+        <div class="pr-inner">
+          <div class="pr-name">フルプラン</div>
+          <div class="pr-for">3〜6ヶ月以内に転職したい方へ</div>
+          <div class="pr-price"><span class="cur">¥</span><span class="amt">150,000</span></div>
+          <div class="pr-term">2ヶ月 / 全8回セッション（税込）</div>
+          <ul class="pr-list">
+            <li>スタンダードの内容すべて含む</li>
+            <li>職務経歴書の構成・添削</li>
+            <li>面接対策・模擬面接</li>
+            <li>内定後フォロー</li>
+          </ul>
+          <a href="#final" class="pr-btn solid">このプランで相談する</a>
+        </div>
+      </div>
+    </div>
+    <p class="pr-sub">どちらか迷ってしまう場合は、まず<b>無料相談（30分）</b>でご相談ください。</p>
+  </div>
+</section>
