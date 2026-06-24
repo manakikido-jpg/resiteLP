@@ -191,3 +191,9 @@ select.inp:invalid { color: var(--tl); }
   display: flex; align-items: center; justify-content: center;
 }
 .A-carry-ic svg { width: 13px; height: 13px; }
+
+/* 予約完了後のマイページ導線 */
+.A-done-mypage { margin-top: 26px; padding-top: 22px; border-top: 1px dashed var(--bd); max-width: 380px; margin-left: auto; margin-right: auto; }
+.A-done-mypage-lead { font-size: 0.8rem; color: var(--ts); line-height: 1.85; margin-bottom: 16px; }
+.A-done-mypage-lead b { color: var(--p); }
+.A-done-mypage .btn-primary { text-decoration: none; }

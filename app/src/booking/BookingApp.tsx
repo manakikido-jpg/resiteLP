@@ -7,6 +7,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Appointment, FormField, FormConfig, WebhookPayload } from "../lib/types";
 import { repository } from "../store/repository";
+import { supabase, isSupabaseConfigured } from "../lib/supabase";
 import { buildBookingRecords } from "../lib/booking";
 import { codeToScores, typeOf } from "../lib/codes";
 import { Calendar } from "./Calendar";
@@ -101,6 +102,7 @@ export function BookingApp() {
   const [values, setValues] = useState<FieldValues>({});
   const [done, setDone] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [reservationToken, setReservationToken] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -149,7 +151,7 @@ export function BookingApp() {
     if (!stepInfo || !date || !time || submitting) return;
     setSubmitting(true);
     const scheduledAt = `${ymdStr(date)}T${time}:00+09:00`;
-    const payload: WebhookPayload = {
+    const base = {
       name: byMap("name"),
       phone: byMap("phone"),
       exp: byMap("exp") || "なし",
@@ -158,13 +160,24 @@ export function BookingApp() {
       loc: byMap("loc"),
       src: "予約フォーム",
       scheduledAt,
-      interviewType: "first",
-      testCode: carriedCode || undefined,
+      interviewType: "first" as const,
     };
-    const { candidate, appointment } = buildBookingRecords(payload);
     try {
-      await repository.saveCandidate(candidate);
-      await repository.saveAppt(appointment);
+      if (isSupabaseConfigured && supabase) {
+        // 匿名はRPC経由で候補者＋予定を作成し、本人のマイページ用トークンを受け取る
+        const test = carriedCode ? codeToScores(carriedCode) || {} : {};
+        const { data, error } = await supabase.rpc("book_trial", {
+          p: { ...base, date: ymdStr(date), test },
+        });
+        if (error) throw error;
+        setReservationToken((data && (data as { reservationToken?: string }).reservationToken) || null);
+      } else {
+        const payload: WebhookPayload = { ...base, testCode: carriedCode || undefined };
+        const { candidate, appointment } = buildBookingRecords(payload);
+        await repository.saveCandidate(candidate);
+        await repository.saveAppt(appointment);
+        setReservationToken(candidate.reservationToken || null);
+      }
       setDone(true);
       window.scrollTo(0, 0);
     } catch (e) {
@@ -237,6 +250,22 @@ export function BookingApp() {
                 <span>{nameVal}</span>
               </div>
             </div>
+
+            {reservationToken && (
+              <div className="A-done-mypage">
+                <p className="A-done-mypage-lead">
+                  次回からは<b>マイページ</b>で予約の確認や日程変更ができます。
+                  <br />
+                  このページをブックマーク、またはLINEのリンクからお開きください。
+                </p>
+                <a className="btn-primary" href={`/mypage/?token=${reservationToken}`}>
+                  マイページを開く
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
+                    <path d="M5 12h14M13 5l7 7-7 7" />
+                  </svg>
+                </a>
+              </div>
+            )}
           </div>
         </div>
       </>
