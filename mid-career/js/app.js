@@ -41,3 +41,11 @@ if (bar) {
   requestAnimationFrame(frame);
   setTimeout(finish, 6000);
 })();
+
+// ===== Meta Pixel: LINE友だち追加クリックをLeadとして計測 =====
+document.addEventListener('click', function (e) {
+  var el = e.target.closest('a[href*="lin.ee"], [onclick*="lin.ee"]');
+  if (el && typeof fbq === 'function') {
+    fbq('track', 'Lead');
+  }
+}, true);
