@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>16タイプ図鑑｜職業タイプ診断｜可能性LABO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Reggae+One&family=Shippori+Mincho:wght@500;600;700;800&family=Noto+Sans+JP:wght@500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+/* ===== 16タイプ図鑑（診断の世界観に統一：クラフト紙×ネオブルータリズム） ===== */
+.zk-wrap{ max-width:1080px; margin:0 auto; padding:40px 20px 90px; }
+.zk-head{ text-align:center; margin-bottom:34px; }
+.zk-badge{ display:inline-block; font-family:var(--ss); font-weight:900; font-size:0.6rem; letter-spacing:0.28em; color:var(--gold); text-transform:uppercase; border:2px solid var(--ink); padding:7px 16px; margin-bottom:18px; background:var(--card); }
+.zk-title{ font-family:var(--dj); font-size:clamp(1.8rem,6vw,3rem); color:var(--ink); line-height:1.15; margin-bottom:12px; }
+.zk-lead{ font-family:var(--mc); font-size:0.92rem; color:var(--ink2); line-height:1.9; }
+/* フィルタ */
+.zk-filter{ display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin:26px 0 30px; }
+.zk-chip{ font-family:var(--ss); font-weight:800; font-size:0.72rem; letter-spacing:0.06em; background:var(--card); color:var(--ink); border:2px solid var(--ink); box-shadow:3px 3px 0 var(--ink); padding:9px 16px; cursor:pointer; transition:transform .12s, box-shadow .12s; }
+.zk-chip:hover{ transform:translateY(-1px); }
+.zk-chip.on{ background:var(--ink); color:var(--card); box-shadow:3px 3px 0 var(--gold); }
+.zk-chip .st{ letter-spacing:-1px; }
+/* グリッド */
+.zk-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:22px; }
+.zk-card{ background:var(--card); border:2.5px solid var(--ink); box-shadow:6px 6px 0 var(--ink); padding:22px 22px 20px; display:flex; flex-direction:column; position:relative; }
+.zk-card.hide{ display:none; }
+.zk-ctop{ display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+.zk-no{ font-family:var(--dj); font-size:0.9rem; color:var(--ink3); }
+.zk-rank{ font-family:var(--ss); font-weight:900; font-size:0.66rem; letter-spacing:0.04em; border:2px solid var(--ink); padding:3px 9px; color:var(--card); }
+.zk-rank[data-r="UR"]{ background:var(--gold); }
+.zk-rank[data-r="SSR"]{ background:var(--red); }
+.zk-rank[data-r="SR"]{ background:var(--green); }
+.zk-rank[data-r="R"]{ background:var(--ink); }
+.zk-rank .stars{ letter-spacing:-1px; margin-left:4px; }
+.zk-emoji{ font-size:2rem; line-height:1; margin:6px 0 8px; }
+.zk-name{ font-family:var(--dj); font-size:1.5rem; color:var(--ink); line-height:1.2; }
+.zk-en{ font-family:var(--ss); font-weight:800; font-size:0.62rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--ink3); margin-top:3px; }
+.zk-pct{ font-family:var(--ss); font-weight:800; font-size:0.6rem; letter-spacing:0.1em; color:var(--gold); margin-top:8px; }
+.zk-copy{ font-family:var(--mc); font-weight:700; font-size:1rem; color:var(--ink); margin:12px 0 6px; }
+.zk-blurb{ font-family:var(--ss); font-weight:500; font-size:0.8rem; color:var(--ink2); line-height:1.85; }
+.zk-more{ margin-top:16px; align-self:flex-start; font-family:var(--ss); font-weight:800; font-size:0.72rem; background:var(--card2); color:var(--ink); border:2px solid var(--ink); box-shadow:3px 3px 0 var(--ink); padding:9px 16px; cursor:pointer; transition:transform .12s; }
+.zk-more:hover{ transform:translateY(-1px); }
+/* 詳細 */
+.zk-detail{ display:none; margin-top:18px; padding-top:16px; border-top:2px dashed var(--ink); }
+.zk-card.open .zk-detail{ display:block; }
+.zk-card.open .zk-more{ background:var(--ink); color:var(--card); box-shadow:3px 3px 0 var(--gold); }
+.zk-sec{ font-family:var(--ss); font-weight:900; font-size:0.6rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--gold); margin:16px 0 8px; display:flex; align-items:center; gap:8px; }
+.zk-sec:first-child{ margin-top:0; }
+.zk-sec::after{ content:''; flex:1; height:2px; background:var(--ink); }
+.zk-li{ font-family:var(--ss); font-size:0.78rem; color:var(--ink); line-height:1.7; margin-bottom:9px; }
+.zk-li b{ display:block; font-weight:800; }
+.zk-li span{ display:block; font-weight:500; color:var(--ink2); font-size:0.74rem; }
+.zk-jobs{ display:flex; flex-wrap:wrap; gap:7px; }
+.zk-job{ font-family:var(--ss); font-weight:700; font-size:0.72rem; background:var(--card2); border:1.5px solid var(--ink); padding:5px 10px; color:var(--ink); }
+.zk-grow{ font-family:var(--ss); font-weight:500; font-size:0.78rem; color:var(--ink2); line-height:1.9; }
+.zk-grow b{ color:var(--ink); font-weight:800; }
+/* 下部CTA */
+.zk-cta{ margin-top:56px; background:var(--ink); border:2.5px solid var(--ink); box-shadow:8px 8px 0 var(--gold); padding:40px 28px; text-align:center; }
+.zk-cta h3{ font-family:var(--dj); font-size:clamp(1.3rem,4.5vw,1.9rem); color:var(--card); line-height:1.3; margin-bottom:12px; }
+.zk-cta p{ font-family:var(--mc); font-size:0.86rem; color:var(--paper2); line-height:1.9; margin-bottom:26px; }
+.zk-line{ display:inline-flex; align-items:center; gap:11px; font-family:var(--ss); font-weight:900; font-size:0.92rem; letter-spacing:0.04em; background:#06C755; color:#fff; border:2px solid #fff; box-shadow:5px 5px 0 var(--gold); padding:16px 34px; text-decoration:none; transition:transform .12s; }
+.zk-line:hover{ transform:translateY(-2px); }
+.zk-line svg{ width:22px; height:22px; fill:#fff; }
+.zk-back{ display:inline-block; margin-top:24px; font-family:var(--ss); font-weight:800; font-size:0.76rem; color:var(--card); text-decoration:underline; text-underline-offset:4px; }
+@media (max-width:560px){
+  .zk-grid{ grid-template-columns:1fr; }
+  .zk-cta{ box-shadow:5px 5px 0 var(--gold); padding:32px 20px; }
+}
+</style>
+</head>
+<body>
+
+<header class="hd">
+  <div class="hd-in">
+    <a href="index.html" class="hd-logo">可能性<b>LABO</b></a>
+    <a href="index.html" class="hd-back">← 診断に戻る</a>
+  </div>
+</header>
+
+<main class="zk-wrap">
+  <div class="zk-head">
+    <div class="zk-badge">Career Type Encyclopedia</div>
+    <h1 class="zk-title">16タイプ図鑑</h1>
+    <p class="zk-lead">職業タイプ診断で判定される全16タイプ。<br>あなたはどのカードを引き当てた？レア度★とあわせてチェック。</p>
+  </div>
+
+  <div class="zk-filter" id="zkFilter"></div>
+  <div class="zk-grid" id="zkGrid"></div>
+
+  <div class="zk-cta">
+    <h3>あなたの"可能性"を、<br>一緒に現実に。</h3>
+    <p>診断で見えたタイプは、キャリアの入口にすぎません。<br>可能性ラボのキャリア相談で、あなたに合った一歩を見つけましょう。</p>
+    <a href="https://lin.ee/Q90TvNX" target="_blank" rel="noopener" class="zk-line" id="zkLine">
+      <svg viewBox="0 0 24 24"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596a.626.626 0 0 1-.199.031c-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.271.173-.508.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.349 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+      LINEで気軽に相談する
+    </a>
+    <br><a href="index.html" class="zk-back">▸ もう一度、診断してみる</a>
+  </div>
+</main>
+
+<div class="ft">© 可能性LABO — Career Type Encyclopedia</div>
+
+<script src="js/data.js"></script>
+<script>
+(function () {
+  var TT = window.TYPETEST;
+  if (!TT || !TT.TYPES) return;
+  var TYPES = TT.TYPES, RARITY = TT.RARITY;
+  var RANK_ORDER = { UR: 0, SSR: 1, SR: 2, R: 3 };
+  var list = Object.keys(TYPES).map(function (k) { return TYPES[k]; })
+    .sort(function (a, b) {
+      return (RANK_ORDER[a.rank] - RANK_ORDER[b.rank]) || a.no.localeCompare(b.no);
+    });
+
+  // --- フィルタチップ ---
+  var counts = { ALL: list.length, UR: 0, SSR: 0, SR: 0, R: 0 };
+  list.forEach(function (t) { counts[t.rank]++; });
+  var order = ['ALL', 'UR', 'SSR', 'SR', 'R'];
+  document.getElementById('zkFilter').innerHTML = order.map(function (r, i) {
+    var label = r === 'ALL' ? 'すべて' : (r + ' <span class="st">' + RARITY[r] + '</span>');
+    return '<button class="zk-chip' + (i === 0 ? ' on' : '') + '" data-f="' + r + '">' + label + ' (' + counts[r] + ')</button>';
+  }).join('');
+
+  // --- カード ---
+  function li(item) {
+    return '<div class="zk-li"><b>' + item.title + '</b><span>' + item.body + '</span></div>';
+  }
+  document.getElementById('zkGrid').innerHTML = list.map(function (t) {
+    return '' +
+      '<article class="zk-card" data-rank="' + t.rank + '">' +
+        '<div class="zk-ctop">' +
+          '<span class="zk-no">№' + t.no + '</span>' +
+          '<span class="zk-rank" data-r="' + t.rank + '">' + t.rank + '<span class="stars">' + RARITY[t.rank] + '</span></span>' +
+        '</div>' +
+        '<div class="zk-emoji">' + t.emoji + '</div>' +
+        '<h2 class="zk-name">' + t.name + '</h2>' +
+        '<div class="zk-en">' + t.en + '</div>' +
+        '<div class="zk-pct">出現率 ' + t.pct + '%</div>' +
+        '<p class="zk-copy">' + t.copy + '</p>' +
+        '<p class="zk-blurb">' + t.blurb + '</p>' +
+        '<button class="zk-more">▾ 詳しく見る</button>' +
+        '<div class="zk-detail">' +
+          '<div class="zk-sec">強み</div>' + t.strengths.map(li).join('') +
+          '<div class="zk-sec">弱み</div>' + t.weaknesses.map(li).join('') +
+          '<div class="zk-sec">向いている職業</div><div class="zk-jobs">' +
+            t.jobs.map(function (j) { return '<span class="zk-job">' + j + '</span>'; }).join('') + '</div>' +
+          '<div class="zk-sec">伸びしろ</div><p class="zk-grow">' + t.grow + '</p>' +
+        '</div>' +
+      '</article>';
+  }).join('');
+
+  // --- 展開トグル ---
+  document.getElementById('zkGrid').addEventListener('click', function (e) {
+    var btn = e.target.closest('.zk-more');
+    if (!btn) return;
+    var card = btn.closest('.zk-card');
+    var open = card.classList.toggle('open');
+    btn.textContent = open ? '▴ 閉じる' : '▾ 詳しく見る';
+  });
+
+  // --- フィルタ ---
+  document.getElementById('zkFilter').addEventListener('click', function (e) {
+    var chip = e.target.closest('.zk-chip');
+    if (!chip) return;
+    var f = chip.getAttribute('data-f');
+    Array.prototype.forEach.call(this.querySelectorAll('.zk-chip'), function (c) { c.classList.remove('on'); });
+    chip.classList.add('on');
+    Array.prototype.forEach.call(document.querySelectorAll('.zk-card'), function (card) {
+      card.classList.toggle('hide', !(f === 'ALL' || card.getAttribute('data-rank') === f));
+    });
+  });
+})();
+</script>
+</body>
+</html>
