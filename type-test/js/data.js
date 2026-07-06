@@ -370,7 +370,7 @@ function scoresToTypeCode(scores){
 }
 
 // 面談予約ページの本番URL（INTEGRATION.md §6）。デプロイ時に書き換える。
-const LINK = { BOOKING_URL: '/booking.html' };
+const LINK = { BOOKING_URL: '/booking.html', LINE_URL: 'https://lin.ee/Q90TvNX' };
 
 window.TYPETEST = { AXES, QUESTIONS, SCALE, RARITY, TYPES, scoreAnswers, axisPercent, statProfile,
   CODE_CHARS, encodeCode, codeToScores, scoreToChar, charToScore, scoresToTypeCode, LINK };

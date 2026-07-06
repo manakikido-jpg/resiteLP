@@ -188,6 +188,8 @@ body{
 .r-ctas{ margin-top:24px; display:flex; flex-direction:column; gap:10px; }
 .r-cta{ text-align:center; padding:16px; font-family:var(--ss); font-weight:900; font-size:0.9rem; letter-spacing:0.03em; background:var(--ink); color:var(--card); border:2px solid var(--ink); box-shadow:4px 4px 0 var(--gold); text-decoration:none; cursor:pointer; }
 .r-cta:active{ transform:translate(2px,2px); box-shadow:2px 2px 0 var(--gold); }
+.r-cta-line{ background:#06C755; border-color:#06C755; color:#fff; display:flex; align-items:center; justify-content:center; gap:10px; }
+.r-cta-line svg{ width:22px; height:22px; fill:#fff; flex-shrink:0; }
 .r-cta-row{ display:flex; gap:9px; }
 .r-cta-s{ flex:1; text-align:center; padding:12px; font-family:var(--ss); font-weight:800; font-size:0.72rem; background:var(--card); border:1.5px solid var(--ink); box-shadow:2px 2px 0 var(--ink); cursor:pointer; color:var(--ink); }
 .r-cta-link{ text-align:center; font-family:var(--ss); font-weight:800; font-size:0.74rem; color:var(--gold); text-decoration:none; padding:8px; }
