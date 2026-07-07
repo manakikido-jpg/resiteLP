@@ -304,14 +304,17 @@ class SupabaseRepository implements DataRepository {
     if (cRes.error) throw cRes.error;
     if (aRes.error) throw aRes.error;
     if (fRes.error) throw fRes.error;
-    if (nRes.error) throw nRes.error;
+    // announcements テーブルはマイグレーション(0004)適用前は存在しないため、
+    // エラー時は空配列にフォールバック（管理アプリ全体を落とさない）。
+    if (nRes.error) console.warn("announcements load skipped:", nRes.error.message);
 
     const candidates = (cRes.data as CandidateRow[]).map(rowToCandidate);
     const appts = (aRes.data as ApptRow[]).map(rowToAppt);
     const formConfig: FormConfig = fRes.data
       ? { fields: fRes.data.fields, slots: fRes.data.slots }
       : { fields: DEFAULT_FORM_FIELDS, slots: DEFAULT_SLOT_CONFIG };
-    const announcements = (nRes.data as AnnouncementRow[]).map(rowToAnnouncement);
+    const announcements =
+      !nRes.error && nRes.data ? (nRes.data as AnnouncementRow[]).map(rowToAnnouncement) : [];
     return { candidates, appts, formConfig, announcements };
   }
 
