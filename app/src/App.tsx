@@ -5,6 +5,7 @@ import { ListView } from "./components/list/ListView";
 import { ScheduleView } from "./components/schedule/ScheduleView";
 import { FormBuilderView } from "./components/form/FormBuilderView";
 import { ProfileView } from "./components/profile/ProfileView";
+import { NewsView } from "./components/news/NewsView";
 
 function Loading() {
   return (
@@ -48,6 +49,7 @@ export function App() {
       {view.name === "list" && <ListView />}
       {view.name === "schedule" && <ScheduleView />}
       {view.name === "form" && <FormBuilderView />}
+      {view.name === "news" && <NewsView />}
       {view.name === "profile" && <ProfileView key={view.id} id={view.id} />}
       {toast && (
         <div className="toast">

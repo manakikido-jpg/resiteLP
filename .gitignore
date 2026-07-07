@@ -13,3 +13,6 @@ Thumbs.db
 node_modules/
 
 .vercel
+
+# Obsidian（個人Vault：プロジェクトgitに含めない）
+obsidian/

@@ -16,8 +16,8 @@ function AnnounceDetail({ item, onBack, toast }) {
       </div>
       <div className="ann-detail">
         <div className="ad-hero">
-          <div className={"ann-ic " + item.tone}><MPIcon name={iconFor(item.kind)} size={22} /></div>
-          <div><span className={"badge " + item.tone}>{item.tag}</span></div>
+          <div className={"ann-ic " + window.annTone(item)}><MPIcon name={iconFor(item.kind)} size={22} /></div>
+          <div><span className={"badge " + window.annTone(item)}>{item.tag}</span></div>
         </div>
         <h1 className="ad-title">{item.title}</h1>
         <span className="ad-date">{window.MP_NOW.getFullYear()}年 {item.date}</span>

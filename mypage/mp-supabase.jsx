@@ -112,6 +112,10 @@ async function loadMyPage() {
     typeName: t ? t.name : "未診断",
   };
 
+  // プロファイルシステムから編集された「コーチメッセージ」「表示レイアウト」
+  window.MYPAGE_MESSAGE = (me.mypageMessage || "").trim();
+  window.MYPAGE_LAYOUT = me.mypageLayout && typeof me.mypageLayout === "object" ? me.mypageLayout : {};
+
   const upcoming = (me.appointments || [])
     .filter((a) => a.status === "予定" && new Date(a.at).getTime() >= now.getTime())
     .sort((a, b) => new Date(a.at) - new Date(b.at));
@@ -165,6 +169,14 @@ async function loadMyPage() {
     window.MAX_DAY = window.addDays(window.startOfDay(now), fc.slots.rangeDays);
     window.slotsForDay = buildSlotsForDay(fc.slots, now);
     window.dayHasOpen = (date) => window.slotsForDay(date).length > 0;
+  }
+
+  // お知らせ（全員共通＋本人個別）をサーバから取得して上書き（失敗時は空に）
+  try {
+    const anns = await sbRpc("mypage_announcements", { p_token: token });
+    window.ANNOUNCEMENTS = Array.isArray(anns) ? anns : [];
+  } catch (e) {
+    window.ANNOUNCEMENTS = [];
   }
 
   return { loading: false, ok: true, hasNext };

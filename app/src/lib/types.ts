@@ -71,8 +71,52 @@ export interface Candidate {
   place: Placement;
   /** 有料キャリアコーチング（任意・契約者のみ） */
   coaching?: Coaching;
+  /** マイページに表示するコーチからの個別メッセージ（空文字=非表示） */
+  mypageMessage?: string;
+  /** マイページのセクション表示制御（未設定=既定順で全表示） */
+  mypageLayout?: MypageLayout;
   /** ISO 8601 作成/更新時刻 */
   at: string;
+}
+
+/** マイページのセクションキー（表示順・ON/OFFの単位） */
+export type MypageSectionKey =
+  | "message"
+  | "next"
+  | "coaching"
+  | "quick"
+  | "news"
+  | "bookcta";
+
+export interface MypageSection {
+  key: MypageSectionKey;
+  on: boolean;
+}
+
+/** マイページのレイアウト設定（sections の順序が表示順） */
+export interface MypageLayout {
+  sections?: MypageSection[];
+}
+
+export type AnnouncementKind = "news" | "service" | "campaign";
+
+/** お知らせ/ニュース（candidateId=null は全員配信、値ありは個別配信） */
+export interface Announcement {
+  id: string;
+  candidateId: string | null;
+  kind: AnnouncementKind;
+  tag: string;
+  tone: string;
+  title: string;
+  lead: string;
+  body: string;
+  cta: string;
+  pinned: boolean;
+  active: boolean;
+  /** 公開日時 ISO 8601 */
+  publishedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export type CoachingPlan = "standard" | "full";

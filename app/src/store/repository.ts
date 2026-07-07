@@ -5,7 +5,7 @@
    ストアは本インターフェース越しに永続化する（Realtime は第二段階）。
    ========================================================= */
 import { supabase } from "../lib/supabase";
-import type { Appointment, Candidate, FormConfig } from "../lib/types";
+import type { Announcement, Appointment, Candidate, FormConfig } from "../lib/types";
 import { DEFAULT_FORM_FIELDS, DEFAULT_SLOT_CONFIG } from "../data/formDefaults";
 import { SEED_APPOINTMENTS, SEED_CANDIDATES } from "../data/seed";
 
@@ -13,6 +13,7 @@ export interface LoadedData {
   candidates: Candidate[];
   appts: Appointment[];
   formConfig: FormConfig;
+  announcements: Announcement[];
 }
 
 export interface DataRepository {
@@ -23,6 +24,8 @@ export interface DataRepository {
   saveAppt(a: Appointment): Promise<void>;
   deleteAppt(id: string): Promise<void>;
   saveFormConfig(cfg: FormConfig): Promise<void>;
+  saveAnnouncement(n: Announcement): Promise<void>;
+  deleteAnnouncement(id: string): Promise<void>;
 }
 
 /* ---------------- localStorage 実装 ---------------- */
@@ -31,6 +34,7 @@ const KEY_CANDIDATES = "kanousei_candidates_v1";
 const KEY_SCHEDULE = "kanousei_schedule_v1";
 // v2: 予約ページ連動のため既定フォーム項目を刷新（旧 v1 キャッシュは破棄）
 const KEY_FORM = "kanousei_form_v2";
+const KEY_NEWS = "kanousei_news_v1";
 
 function readArray<T>(key: string): T[] | null {
   try {
@@ -72,11 +76,12 @@ class LocalStorageRepository implements DataRepository {
     const appts = readArray<Appointment>(KEY_SCHEDULE) ?? SEED_APPOINTMENTS;
     const formConfig =
       readObject<FormConfig>(KEY_FORM) ?? { fields: DEFAULT_FORM_FIELDS, slots: DEFAULT_SLOT_CONFIG };
+    const announcements = readArray<Announcement>(KEY_NEWS) ?? [];
     // 初回はシードを書き込んで「共有ストレージ」を初期化
     if (!readArray<Candidate>(KEY_CANDIDATES)) write(KEY_CANDIDATES, candidates);
     if (!readArray<Appointment>(KEY_SCHEDULE)) write(KEY_SCHEDULE, appts);
     if (!readObject<FormConfig>(KEY_FORM)) write(KEY_FORM, formConfig);
-    return { candidates, appts, formConfig };
+    return { candidates, appts, formConfig, announcements };
   }
 
   async saveCandidate(c: Candidate): Promise<void> {
@@ -104,6 +109,16 @@ class LocalStorageRepository implements DataRepository {
   async saveFormConfig(cfg: FormConfig): Promise<void> {
     write(KEY_FORM, cfg);
   }
+  async saveAnnouncement(n: Announcement): Promise<void> {
+    const list = readArray<Announcement>(KEY_NEWS) ?? [];
+    const i = list.findIndex((x) => x.id === n.id);
+    const next = i >= 0 ? list.map((x) => (x.id === n.id ? n : x)) : [n, ...list];
+    write(KEY_NEWS, next);
+  }
+  async deleteAnnouncement(id: string): Promise<void> {
+    const list = readArray<Announcement>(KEY_NEWS) ?? [];
+    write(KEY_NEWS, list.filter((x) => x.id !== id));
+  }
 }
 
 /* ---------------- Supabase 実装 ---------------- */
@@ -128,6 +143,8 @@ interface CandidateRow {
   asmt: Candidate["asmt"];
   place: Candidate["place"];
   coaching: Candidate["coaching"] | Record<string, never>;
+  mypage_message: string | null;
+  mypage_layout: Candidate["mypageLayout"] | null;
   created_at: string;
 }
 
@@ -152,6 +169,8 @@ function rowToCandidate(r: CandidateRow): Candidate {
     asmt: r.asmt,
     place: r.place,
     coaching: r.coaching && Object.keys(r.coaching).length > 0 ? (r.coaching as Candidate["coaching"]) : undefined,
+    mypageMessage: r.mypage_message ?? "",
+    mypageLayout: r.mypage_layout ?? {},
     at: r.created_at,
   };
 }
@@ -176,7 +195,60 @@ function candidateToRow(c: Candidate): CandidateRow {
     asmt: c.asmt,
     place: c.place,
     coaching: c.coaching ?? {},
+    mypage_message: c.mypageMessage ?? "",
+    mypage_layout: c.mypageLayout ?? {},
     created_at: c.at,
+  };
+}
+
+interface AnnouncementRow {
+  id: string;
+  candidate_id: string | null;
+  kind: string;
+  tag: string;
+  tone: string;
+  title: string;
+  lead: string;
+  body: string;
+  cta: string;
+  pinned: boolean;
+  active: boolean;
+  published_at: string;
+  created_at?: string;
+  updated_at?: string;
+}
+function rowToAnnouncement(r: AnnouncementRow): Announcement {
+  return {
+    id: r.id,
+    candidateId: r.candidate_id,
+    kind: (r.kind as Announcement["kind"]) ?? "news",
+    tag: r.tag ?? "",
+    tone: r.tone ?? "",
+    title: r.title ?? "",
+    lead: r.lead ?? "",
+    body: r.body ?? "",
+    cta: r.cta ?? "",
+    pinned: !!r.pinned,
+    active: r.active ?? true,
+    publishedAt: r.published_at,
+    createdAt: r.created_at,
+    updatedAt: r.updated_at,
+  };
+}
+function announcementToRow(n: Announcement): AnnouncementRow {
+  return {
+    id: n.id,
+    candidate_id: n.candidateId,
+    kind: n.kind,
+    tag: n.tag,
+    tone: n.tone,
+    title: n.title,
+    lead: n.lead,
+    body: n.body,
+    cta: n.cta,
+    pinned: n.pinned,
+    active: n.active,
+    published_at: n.publishedAt,
   };
 }
 
@@ -223,21 +295,24 @@ class SupabaseRepository implements DataRepository {
 
   async loadAll(): Promise<LoadedData> {
     const client = supabase!;
-    const [cRes, aRes, fRes] = await Promise.all([
+    const [cRes, aRes, fRes, nRes] = await Promise.all([
       client.from("candidates").select("*").order("created_at", { ascending: false }),
       client.from("appointments").select("*").order("at", { ascending: true }),
       client.from("form_config").select("*").eq("id", 1).maybeSingle(),
+      client.from("announcements").select("*").order("published_at", { ascending: false }),
     ]);
     if (cRes.error) throw cRes.error;
     if (aRes.error) throw aRes.error;
     if (fRes.error) throw fRes.error;
+    if (nRes.error) throw nRes.error;
 
     const candidates = (cRes.data as CandidateRow[]).map(rowToCandidate);
     const appts = (aRes.data as ApptRow[]).map(rowToAppt);
     const formConfig: FormConfig = fRes.data
       ? { fields: fRes.data.fields, slots: fRes.data.slots }
       : { fields: DEFAULT_FORM_FIELDS, slots: DEFAULT_SLOT_CONFIG };
-    return { candidates, appts, formConfig };
+    const announcements = (nRes.data as AnnouncementRow[]).map(rowToAnnouncement);
+    return { candidates, appts, formConfig, announcements };
   }
 
   async saveCandidate(c: Candidate): Promise<void> {
@@ -260,6 +335,14 @@ class SupabaseRepository implements DataRepository {
     const { error } = await supabase!
       .from("form_config")
       .upsert({ id: 1, fields: cfg.fields, slots: cfg.slots });
+    if (error) throw error;
+  }
+  async saveAnnouncement(n: Announcement): Promise<void> {
+    const { error } = await supabase!.from("announcements").upsert(announcementToRow(n));
+    if (error) throw error;
+  }
+  async deleteAnnouncement(id: string): Promise<void> {
+    const { error } = await supabase!.from("announcements").delete().eq("id", id);
     if (error) throw error;
   }
 }

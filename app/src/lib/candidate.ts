@@ -28,6 +28,8 @@ export function blankCandidate(partial: Partial<Candidate> = {}): Candidate {
       notes: "",
     },
     place: { industry: "", role: "", status: "面談済", next: "", memo: "" },
+    mypageMessage: "",
+    mypageLayout: {},
     at: new Date().toISOString(),
     ...partial,
   };

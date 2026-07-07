@@ -42,6 +42,13 @@ export function AppBar({ right }: { right?: ReactNode }) {
             <Icon name="form" size={16} />
             予約フォーム
           </button>
+          <button
+            className={"navitem" + (cur === "news" ? " on" : "")}
+            onClick={() => navigate({ name: "news" })}
+          >
+            <Icon name="spark" size={16} />
+            お知らせ
+          </button>
         </nav>
         <div className="appbar-spacer" />
         {right}

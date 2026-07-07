@@ -14,6 +14,7 @@ import { TabInterview1, TabInterview2 } from "./tabs/TabInterview";
 import { TabAptitude } from "./tabs/TabAptitude";
 import { TabAssessment, TabPlacement } from "./tabs/TabAssessment";
 import { TabCoaching } from "./tabs/TabCoaching";
+import { TabMypage } from "./tabs/TabMypage";
 
 export type SetField = (path: string[], value: unknown) => void;
 export interface TabProps {
@@ -21,7 +22,7 @@ export interface TabProps {
   set: SetField;
 }
 
-type TabKey = "basic" | "i1" | "i2" | "aptitude" | "asmt" | "place" | "coaching";
+type TabKey = "basic" | "i1" | "i2" | "aptitude" | "asmt" | "place" | "coaching" | "mypage";
 
 const TAB_DEFS: { key: TabKey; label: string; Comp: (p: TabProps) => JSX.Element }[] = [
   { key: "basic", label: "基本情報", Comp: TabBasic },
@@ -31,6 +32,7 @@ const TAB_DEFS: { key: TabKey; label: string; Comp: (p: TabProps) => JSX.Element
   { key: "asmt", label: "総合所見", Comp: TabAssessment },
   { key: "place", label: "送客判断", Comp: TabPlacement },
   { key: "coaching", label: "コーチング", Comp: TabCoaching },
+  { key: "mypage", label: "マイページ", Comp: TabMypage },
 ];
 
 function tabHasContent(c: Candidate, key: TabKey): boolean {
@@ -42,6 +44,8 @@ function tabHasContent(c: Candidate, key: TabKey): boolean {
   if (key === "asmt") return asmtTotal(c.asmt) > 0 || (c.asmt?.notes || "").trim() !== "";
   if (key === "place") return !!(c.place?.industry || c.place?.role || c.place?.next || c.place?.memo);
   if (key === "coaching") return !!c.coaching?.plan;
+  if (key === "mypage")
+    return !!(c.mypageMessage && c.mypageMessage.trim()) || !!c.mypageLayout?.sections?.length;
   return false;
 }
 

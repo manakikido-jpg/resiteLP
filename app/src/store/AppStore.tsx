@@ -13,6 +13,7 @@ import {
   type ReactNode,
 } from "react";
 import type {
+  Announcement,
   Appointment,
   Candidate,
   FormConfig,
@@ -29,6 +30,7 @@ export type View =
   | { name: "list" }
   | { name: "schedule" }
   | { name: "form" }
+  | { name: "news" }
   | { name: "profile"; id: string };
 
 type Updater<T> = T | ((prev: T) => T);
@@ -45,6 +47,7 @@ export interface AppContextValue {
   signOut: () => Promise<void>;
   candidates: Candidate[];
   appts: Appointment[];
+  announcements: Announcement[];
   formFields: FormField[];
   slotConfig: SlotConfig;
   saving: boolean;
@@ -55,6 +58,8 @@ export interface AppContextValue {
   removeCandidate: (id: string) => void;
   upsertAppt: (appt: Appointment) => void;
   removeAppt: (id: string) => void;
+  saveAnnouncement: (n: Announcement) => void;
+  removeAnnouncement: (id: string) => void;
   simulateWebhook: (payload: WebhookPayload) => { candidate: Candidate; appt: Appointment };
   setFormFields: (updater: Updater<FormField[]>) => void;
   setSlotConfig: (updater: Updater<SlotConfig>) => void;
@@ -82,6 +87,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [appts, setAppts] = useState<Appointment[]>([]);
+  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [formCfg, setFormCfg] = useState<FormConfig>({ fields: [], slots: {} as SlotConfig });
   const [view, setView] = useState<View>({ name: "list" });
   const [saving, setSaving] = useState(false);
@@ -92,6 +98,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const pending = useRef({
     cands: new Map<string, Candidate>(),
     appts: new Map<string, Appointment>(),
+    news: new Map<string, Announcement>(),
     form: null as FormConfig | null,
   });
 
@@ -127,6 +134,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut();
     setCandidates([]);
     setAppts([]);
+    setAnnouncements([]);
     setLoading(true);
   }, []);
 
@@ -141,6 +149,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         if (!active) return;
         setCandidates(data.candidates);
         setAppts(data.appts);
+        setAnnouncements(data.announcements);
         setFormCfg(data.formConfig);
         setLoading(false);
       })
@@ -157,14 +166,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const p = pending.current;
     const cands = [...p.cands.values()];
     const apptList = [...p.appts.values()];
+    const newsList = [...p.news.values()];
     const form = p.form;
     p.cands.clear();
     p.appts.clear();
+    p.news.clear();
     p.form = null;
     try {
       await Promise.all([
         ...cands.map((c) => repository.saveCandidate(c)),
         ...apptList.map((a) => repository.saveAppt(a)),
+        ...newsList.map((n) => repository.saveAnnouncement(n)),
         ...(form ? [repository.saveFormConfig(form)] : []),
       ]);
     } catch (e) {
@@ -243,6 +255,25 @@ export function AppProvider({ children }: { children: ReactNode }) {
     repository.deleteAppt(id).catch((e) => console.error(e));
   }, []);
 
+  /* ---- お知らせ / ニュース ---- */
+  const saveAnnouncement = useCallback(
+    (n: Announcement) => {
+      setAnnouncements((list) => {
+        const exists = list.some((x) => x.id === n.id);
+        return exists ? list.map((x) => (x.id === n.id ? n : x)) : [n, ...list];
+      });
+      pending.current.news.set(n.id, n);
+      scheduleFlush();
+    },
+    [scheduleFlush]
+  );
+
+  const removeAnnouncement = useCallback((id: string) => {
+    setAnnouncements((list) => list.filter((x) => x.id !== id));
+    pending.current.news.delete(id);
+    repository.deleteAnnouncement(id).catch((e) => console.error(e));
+  }, []);
+
   /* ---- 予約フォーム連携（Webhook シミュレーション） ---- */
   const simulateWebhook = useCallback((payload: WebhookPayload) => {
     const { candidate, appointment } = buildBookingRecords(payload);
@@ -288,6 +319,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     signOut,
     candidates,
     appts,
+    announcements,
     formFields: formCfg.fields,
     slotConfig: formCfg.slots,
     saving,
@@ -298,6 +330,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     removeCandidate,
     upsertAppt,
     removeAppt,
+    saveAnnouncement,
+    removeAnnouncement,
     simulateWebhook,
     setFormFields,
     setSlotConfig,

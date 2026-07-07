@@ -111,6 +111,13 @@ function CoachingCard({ slim }) {
   );
 }
 
+/* お知らせの色トーン（未設定は種別から補完） */
+function annTone(a) {
+  if (a && a.tone) return a.tone;
+  const k = a && a.kind;
+  return k === "service" ? "cyan" : k === "campaign" ? "warn" : "info";
+}
+
 /* ---------- アナウンス：カード型（A / B） ---------- */
 function AnnouncementsFeed({ items, onOpen }) {
   const { MPIcon } = window;
@@ -119,7 +126,7 @@ function AnnouncementsFeed({ items, onOpen }) {
     <div className="ann-list">
       {items.map((a) => (
         <button className="ann-item" key={a.id} onClick={() => onOpen(a)}>
-          <div className={"ann-ic " + a.tone}><MPIcon name={iconFor(a.kind)} size={20} /></div>
+          <div className={"ann-ic " + annTone(a)}><MPIcon name={iconFor(a.kind)} size={20} /></div>
           <div className="ann-main">
             <div className="ann-metarow">
               <span className="ann-date">{a.date}</span>
@@ -220,24 +227,73 @@ function BookCTA({ onBook }) {
   );
 }
 
+/* ---------- コーチからのメッセージ（プロファイルシステムで編集） ---------- */
+function CoachMessage() {
+  const { MYPAGE_MESSAGE, ME, MPIcon } = window;
+  if (!MYPAGE_MESSAGE) return null;
+  return (
+    <div className="card coach-msg">
+      <div className="cm-head"><span className="cm-ic"><MPIcon name="coaching" size={15} /></span>{ME.coach} コーチより</div>
+      <p className="cm-body">{MYPAGE_MESSAGE}</p>
+    </div>
+  );
+}
+
+/* レイアウト設定（MYPAGE_LAYOUT.sections）を解決。未設定は既定順で全表示 */
+const MP_SECTION_KEYS = ["message", "next", "quick", "coaching", "news", "bookcta"];
+function mpResolveSections() {
+  const layout = window.MYPAGE_LAYOUT || {};
+  const stored = Array.isArray(layout.sections)
+    ? layout.sections.filter((s) => s && MP_SECTION_KEYS.includes(s.key))
+    : [];
+  if (!stored.length) return MP_SECTION_KEYS.map((key) => ({ key, on: true }));
+  const onMap = new Map(stored.map((s) => [s.key, s.on]));
+  const order = [...stored.map((s) => s.key), ...MP_SECTION_KEYS.filter((k) => !onMap.has(k))];
+  return order.map((key) => ({ key, on: onMap.has(key) ? !!onMap.get(key) : true }));
+}
+
 /* =========================================================
-   レイアウト A — フィード型
+   レイアウト A — フィード型（表示順・ON/OFF はプロファイルから制御）
    ========================================================= */
 function HomeA({ onBook, onOpenAnn, toast, items, hasNext }) {
+  const { MPIcon } = window;
+  const sections = mpResolveSections().filter((s) => s.on);
+  const renderSection = (key) => {
+    switch (key) {
+      case "message":
+        return <CoachMessage key="message" />;
+      case "next":
+        return (
+          <React.Fragment key="next">
+            {hasNext ? <NextHero onReschedule={onBook} toast={toast} /> : <NextEmpty onBook={onBook} grad />}
+          </React.Fragment>
+        );
+      case "quick":
+        return <QuickActions key="quick" onBook={onBook} toast={toast} />;
+      case "coaching":
+        return window.COACHING ? (
+          <React.Fragment key="coaching">
+            <div className="sec-head"><MPIcon name="coaching" size={16} /><h2>コーチングの進捗</h2><span className="line" /></div>
+            <CoachingCard />
+          </React.Fragment>
+        ) : null;
+      case "news":
+        return items && items.length ? (
+          <React.Fragment key="news">
+            <div className="sec-head"><MPIcon name="bell" size={16} /><h2>お知らせ</h2><span className="line" /></div>
+            <AnnouncementsFeed items={items} onOpen={onOpenAnn} />
+          </React.Fragment>
+        ) : null;
+      case "bookcta":
+        return <BookCTA key="bookcta" onBook={onBook} />;
+      default:
+        return null;
+    }
+  };
   return (
     <div className="mp-body">
       <Greeting />
-      {hasNext ? <NextHero onReschedule={onBook} toast={toast} /> : <NextEmpty onBook={onBook} grad />}
-      <QuickActions onBook={onBook} toast={toast} />
-      {window.COACHING && (
-        <>
-          <div className="sec-head"><MPIcon name="coaching" size={16} /><h2>コーチングの進捗</h2><span className="line" /></div>
-          <CoachingCard />
-        </>
-      )}
-      <div className="sec-head"><MPIcon name="bell" size={16} /><h2>お知らせ</h2><span className="line" /></div>
-      <AnnouncementsFeed items={items} onOpen={onOpenAnn} />
-      <BookCTA onBook={onBook} />
+      {sections.map((s) => renderSection(s.key))}
     </div>
   );
 }
@@ -284,4 +340,4 @@ function HomeC({ onBook, onOpenAnn, toast, items, hasNext }) {
   );
 }
 
-Object.assign(window, { HomeA, HomeB, HomeC, AnnouncementsFeed });
+Object.assign(window, { HomeA, HomeB, HomeC, AnnouncementsFeed, annTone });

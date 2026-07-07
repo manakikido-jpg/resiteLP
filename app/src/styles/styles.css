@@ -783,3 +783,11 @@ input, textarea, select { font-family: inherit; }
 .login-sub{font-size:12.5px;color:var(--ink-3);text-align:center;margin-top:-8px;margin-bottom:6px;}
 .login-err{font-size:12.5px;color:var(--t-warn-fg,#a9772a);background:var(--t-warn-bg,#faf0dd);border-radius:var(--r-sm);padding:9px 12px;}
 .login-btn{width:100%;justify-content:center;height:46px;margin-top:4px;}
+
+/* ---- マイページ管理タブ：セクション表示・並び順 ---- */
+.mp-sections { display: flex; flex-direction: column; gap: 8px; }
+.mp-section-row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--surface); }
+.mp-section-row.off { opacity: 0.55; }
+.mp-reorder { display: inline-flex; flex-direction: column; gap: 2px; }
+.mp-section-name { flex: 1; font-weight: 600; font-size: 13.5px; }
+.card-head .sec.off { opacity: 0.4; }
