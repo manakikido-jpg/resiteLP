@@ -180,9 +180,12 @@
     if(ctas) ctas.style.display = 'none';
     let url;
     try{
+      // wrap は margin:0 auto で中央寄せのため、そのまま撮ると html-to-image が
+      // オフセットぶんカードを右へ押し出して右端が見切れる。margin:0＋幅/高さ明示で回避。
       url = await window.htmlToImage.toPng(wrap, {
         pixelRatio: 2, skipFonts: true, backgroundColor: '#E7DCC4',
-        style:{ paddingTop:'24px', paddingBottom:'24px' }
+        width: wrap.offsetWidth, height: wrap.scrollHeight,
+        style:{ margin:'0', paddingTop:'24px', paddingBottom:'24px' }
       });
     } finally {
       if(ctas) ctas.style.display = prev;
