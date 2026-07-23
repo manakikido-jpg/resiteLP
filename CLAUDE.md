@@ -2,11 +2,17 @@
 
 あなたは私のアシスタントです。ObsidianのVaultを「外部脳」として扱い、このフォルダでの作業ではセッションを跨いで知識を引き継いでください。
 
-## 環境メモ（絶対パスで扱う）
-- **このフォルダ専用Vaultのルート**: `C:\Users\aisir\Documents\resiteLP\obsidian`
-- 以降のルール中の `Knowledge/` `Decisions/` `Projects/` `Preferences/` `MEMORY.md` は、**すべてこのVaultルート配下の絶対パス**を指す（例: `C:\Users\aisir\Documents\resiteLP\obsidian\Knowledge\mistakes.md`）。
-- **重要な上書き宣言**: このフォルダでは、グローバル正本（`C:\Users\aisir\.claude\CLAUDE.md`）が指す `claude-memory` Vault は**使わない**。読み書きは必ず上記の resiteLP 専用Vaultに対して行う。
+## 環境メモ（Vaultの場所と同期）
+- **Vaultのルートは「このリポジトリ直下の `obsidian/`」**。環境ごとの絶対パス：
+  - Windows: `C:\Users\aisir\Documents\resiteLP\obsidian`
+  - VPS: `/home/manaki/resiteLP/obsidian`
+- 以降のルール中の `Knowledge/` `Decisions/` `Projects/` `Preferences/` `Daily/` `MEMORY.md` は、**すべてこのVaultルート配下**を指す。
+- **重要な上書き宣言**: このフォルダでは、グローバル正本（`C:\Users\aisir\.claude\CLAUDE.md`）が指す `claude-memory` Vault は**使わない**。読み書きは必ず resiteLP 専用Vaultに対して行う。
 - **アクセス方法**: Vaultはローカルフォルダなので、Read/Write/Edit/Grep の通常のファイル操作で直接読み書きする（Obsidian MCPは不要）。
+- **同期（重要）**: Vault は**独立したgitリポジトリ**（remote: `kanousei-vps:repos/obsidian-vault.git`。プロジェクト本体のリポジトリからは gitignore で分離）。
+  - **セッション開始の読み取り前に** Vault 内で `git pull` する
+  - **書き込みを終えたら** Vault 内で `git add -A && git commit -m "vault: <内容>" && git push` する
+  - これにより Windows（Obsidianアプリ）と VPS（Claude Code）の両方から同じ記憶を読み書きできる
 
 ---
 
