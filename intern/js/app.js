@@ -38,7 +38,7 @@ if (bar) {
   var ov = document.getElementById('plOverlay'); if(!ov) return;
   var pct = document.getElementById('plPct'), fill = document.getElementById('plFill');
   document.body.classList.add('pl-lock');
-  var dur = 2200, start = null, done = false;
+  var dur = 1200, start = null, done = false;
   function finish(){
     if(done) return; done = true;
     ov.classList.add('pl-hide');

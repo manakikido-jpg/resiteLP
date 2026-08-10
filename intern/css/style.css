@@ -121,7 +121,8 @@ body::after {
 .logo img { height: 56px; width: auto; }
 .header-btn {
   background: var(--p); color: var(--w); border: none;
-  padding: 9px 22px; border-radius: 60px; font-weight: 700; font-size: 0.78rem;
+  /* 指で押せる高さを確保する。以前は高さ32pxで、推奨44pxを下回っていた */
+  padding: 14px 22px; border-radius: 60px; font-weight: 700; font-size: 0.78rem;
   cursor: pointer; font-family: var(--ss); letter-spacing: 0.3px;
   transition: background 0.3s;
 }
@@ -348,7 +349,7 @@ body::after {
 .hero-cta {
   display: inline-flex; align-items: center; gap: 14px;
   background: #FFFFFF; color: var(--p);
-  padding: 18px 44px; border-radius: 0; font-size: 0.9rem; font-weight: 600;
+  padding: 18px 44px; border-radius: 0; font-size: 0.9rem; font-weight: 700;
   text-decoration: none; font-family: var(--sf);
   border: none;
   box-shadow: 0 12px 40px rgba(0,0,0,0.12);
@@ -414,7 +415,7 @@ body::after {
   content: ''; display: inline-block;
   width: 40px; height: 1px; background: var(--p); opacity: 0.5;
 }
-.step-form h3 {
+.step-form h2 {
   font-family: var(--sj); font-size: clamp(1.5rem, 3.4vw, 2.1rem); font-weight: 500;
   color: var(--t); margin-bottom: 48px; line-height: 1.6; letter-spacing: 0.04em;
   max-width: 560px;
@@ -787,7 +788,7 @@ body::after {
   background: var(--bg2); display: flex; align-items: center; justify-content: center;
   font-size: 1.6rem; border: 2px solid var(--bd);
 }
-.co-nm { font-family: var(--sf); font-weight: 600; font-size: 0.95rem; margin-bottom: 4px; letter-spacing: 0.02em; }
+.co-nm { font-family: var(--sf); font-weight: 700; font-size: 0.95rem; margin-bottom: 4px; letter-spacing: 0.02em; }
 .co-ttl { font-family: var(--sd); font-size: 0.65rem; color: var(--p); font-weight: 500; margin-bottom: 14px; letter-spacing: 0.18em; text-transform: uppercase; }
 .co-bio { font-size: 0.8rem; color: var(--ts); line-height: 2; font-weight: 400; letter-spacing: 0.02em; }
 
@@ -882,11 +883,11 @@ body::after {
   border-radius: 50%; pointer-events: none;
 }
 .dc-in { max-width: 600px; margin: 0 auto; position: relative; z-index: 2; }
-.dc h3 {
+.dc h2 {
   font-family: var(--sj); font-size: clamp(1.4rem, 3.2vw, 1.9rem);
   font-weight: 700; margin-bottom: 16px; line-height: 1.65; letter-spacing: 0.025em;
 }
-.dc h3 .em { color: var(--p); font-style: italic; font-weight: 500; font-size: 1.05em; }
+.dc h2 .em { color: var(--p); font-style: italic; font-weight: 500; font-size: 1.05em; }
 .dc-lead { font-size: 0.85rem; color: var(--ts); line-height: 1.8; margin-bottom: 32px; }
 .dc-arrows { display: flex; justify-content: center; gap: 100px; margin-bottom: 8px; color: var(--a); font-size: 1.5rem; }
 .dc-labels { display: flex; justify-content: center; gap: 64px; margin-bottom: 16px; font-size: 0.72rem; color: var(--ts); }
@@ -1015,7 +1016,8 @@ body::after {
   /* Header */
   .header { padding: 10px 16px; }
   .logo img { height: 44px; }
-  .header-btn { padding: 8px 14px; font-size: 0.7rem; }
+  /* スマホでも指で押せる高さを保つ。横は詰めてよいが上下は詰めない */
+  .header-btn { padding: 14px 16px; font-size: 0.7rem; }
 
   /* Shared */
   .sec { padding: 56px 18px; }
@@ -1061,7 +1063,7 @@ body::after {
   .step-form-in { max-width: 100%; }
   .sf-badge { font-size: 0.62rem; padding: 0; margin-bottom: 20px; letter-spacing: 0.3em; }
   .sf-badge::after { width: 24px; }
-  .step-form h3 { font-size: 1.2rem; margin-bottom: 32px; }
+  .step-form h2 { font-size: 1.2rem; margin-bottom: 32px; }
   .sf-flow { flex-direction: column; gap: 20px; padding: 20px 0; margin-bottom: 40px; }
   .sf-flow-arrow { display: none; }
   .sf-flow-step { padding: 0; min-width: 0; }
@@ -1128,7 +1130,7 @@ body::after {
 
   /* Dual CTA */
   .dc { padding: 56px 18px; }
-  .dc h3 { font-size: 1.15rem; }
+  .dc h2 { font-size: 1.15rem; }
   .dc-lead { font-size: 0.8rem; margin-bottom: 24px; }
   .dc-arrows { gap: 40px; font-size: 1.2rem; margin-bottom: 4px; }
   .dc-labels { gap: 20px; font-size: 0.62rem; margin-bottom: 12px; }
@@ -1158,11 +1160,11 @@ body::after {
   .hero-big-en { font-size: 2.4rem; letter-spacing: -1px; }
   .hero h1 { font-size: 1.3rem; }
   .hero-cta { font-size: 0.82rem; padding: 14px 16px; }
-  .step-form h3 { font-size: 1rem; }
+  .step-form h2 { font-size: 1rem; }
   .sf-opts { grid-template-columns: 1fr; gap: 8px; }
   .st { font-size: 1.1rem; }
   .ct { min-width: 440px; font-size: 0.6rem; }
-  .dc h3 { font-size: 1.05rem; }
+  .dc h2 { font-size: 1.05rem; }
   .co-card { flex-direction: column; text-align: center; gap: 10px; }
   .co-av { margin: 0 auto; }
 }
@@ -1445,7 +1447,7 @@ body::after {
 /* Giant ghost numeral watermark — sits in the far right whitespace of each section */
 .sec > .sec-in > .sec-ghost {
   position: absolute; top: -20px; right: -40px;
-  font-family: var(--sd); font-weight: 300;
+  font-family: var(--sd); font-weight: 400;
   font-size: clamp(9rem, 22vw, 18rem);
   line-height: 0.85; letter-spacing: -0.04em;
   color: transparent;

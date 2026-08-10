@@ -24,7 +24,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <link rel="canonical" href="https://kanousei-labo.com/mid-career/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Shippori+Mincho:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- 使っているウェイトだけに絞る。日本語書体は1ウェイトあたり unicode-range が
+     100ブロック超あり、宣言を増やすほどCSSが肥大する（実測 1,132KB）。
+     Inter は一度も使われていなかったため削除。800 はCSSに1箇所も無し。 -->
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=Shippori+Mincho:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <!-- Meta Pixel Code -->
 <script>
@@ -39,7 +42,7 @@ s.parentNode.insertBefore(t,s)}(window, document,'script',
 fbq('init', '1064918742533936');
 fbq('track', 'PageView');
 </script>
-<noscript><img height="1" width="1" style="display:none"
+<noscript><img height="1" width="1" alt="" style="display:none"
 src="https://www.facebook.com/tr?id=1064918742533936&ev=PageView&noscript=1"
 /></noscript>
 <!-- End Meta Pixel Code -->
@@ -106,7 +109,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <section class="step-form">
   <div class="step-form-in">
     <div class="sf-badge">QUICK CHECK · 30秒</div>
-    <h3>キャリアの現在地を確認する</h3>
+    <h2>キャリアの現在地を確認する</h2>
     <div class="sf-flow">
       <div class="sf-flow-step">
         <div class="sf-flow-num">1</div>
@@ -422,7 +425,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- ⑪ DUAL CTA -->
 <section class="dc fade-in wave-top wave-top-white"><div class="drops-light drops-sec"><div class="drop drop-1"></div><div class="drop drop-2"></div><div class="drop drop-3"></div><div class="drop drop-4"></div><div class="drop drop-5"></div></div>
   <div class="dc-in">
-    <h3>あなたの<span class="em">キャリア</span>に合わせて<br>選べる2つの入口</h3>
+    <h2>あなたの<span class="em">キャリア</span>に合わせて<br>選べる2つの入口</h2>
     <p class="dc-lead">キャリアに自分なりの「正解」を持ちながら、納得できるキャリアチェンジや仕事選びをしたい方に。あなたの状況に合わせてお選びください。</p>
     <div class="dc-guide">
       <div class="dc-guide-item"><div class="dc-guide-arrow">▼</div><div class="dc-guide-label">＼ 求人を探す ／</div></div>
@@ -439,7 +442,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <section class="fc" id="final">
   <div class="drops-lav drops-sec"><div class="drop drop-1"></div><div class="drop drop-2"></div><div class="drop drop-3"></div><div class="drop drop-4"></div><div class="drop drop-5"></div></div>
   <div class="fc-in">
-    <div style="border-left:2px solid rgba(255,255,255,0.3);padding-left:22px;text-align:left;max-width:520px;margin:0 0 24px;font-family:var(--sf);font-size:clamp(0.88rem,2vw,1.02rem);line-height:2;color:var(--tw);font-weight:300">
+    <div style="border-left:2px solid rgba(255,255,255,0.3);padding-left:22px;text-align:left;max-width:520px;margin:0 0 24px;font-family:var(--sf);font-size:clamp(0.88rem,2vw,1.02rem);line-height:2;color:var(--tw);font-weight:400">
       希望の求人に入社できれば、本当に幸せになれますか？<br>
       私たちは、うわべではない本質的な課題解決を支援し、サービス卒業後も自走できる状態を目指します。
     </div>
