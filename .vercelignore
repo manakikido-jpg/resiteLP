@@ -1,0 +1,20 @@
+# Vercel にアップロードしないもの。
+# ビルドが使うのは app/ と STATIC_SITES（mypage / type-test / intern / mid-career）と
+# scripts/ だけ（scripts/build-vercel.mjs 参照）。それ以外は送らない。
+
+# 個人Vault。社内メモが入っているのでビルドマシンに置かない
+obsidian/
+
+# ビルド生成物。毎回ビルドで作り直すので送る意味がない
+dist/
+app/dist/
+
+# 依存とgit履歴
+node_modules/
+.git/
+
+# ビルドに使わないもの
+docs/
+lp/
+lp-update/
+*.log
