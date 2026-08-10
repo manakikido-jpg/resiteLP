@@ -2,6 +2,24 @@ function sopt(el) {
   document.querySelectorAll('#so .sf-opt').forEach(b => b.classList.remove('sel'));
   el.classList.add('sel');
   document.getElementById('sn').classList.add('ok');
+  sfPush('quick_check_answer', { quick_check_answer: (el.textContent || '').trim() });
+}
+
+// ===== QUICK CHECK の回答をGTMに送る =====
+// 以前は回答がどこにも記録されず捨てられていた。画面の挙動は変えず、計測だけ載せる。
+function sfPush(name, extra) {
+  window.dataLayer = window.dataLayer || [];
+  var q = document.querySelector('.sf-q');
+  window.dataLayer.push(Object.assign({
+    event: name,
+    quick_check_question: q ? q.textContent.trim() : ''
+  }, extra || {}));
+}
+// 「次へすすむ」：回答を送ってからLINEを開く
+function sfNext() {
+  var sel = document.querySelector('#so .sf-opt.sel');
+  sfPush('quick_check_next', { quick_check_answer: sel ? sel.textContent.trim() : '(未選択)' });
+  window.open('https://lin.ee/Q90TvNX', '_blank', 'noopener');
 }
 
 // ④ Scroll fade-in observer

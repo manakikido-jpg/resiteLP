@@ -119,6 +119,13 @@ body::after {
 }
 .logo { display: flex; align-items: center; }
 .logo img { height: 56px; width: auto; }
+/* ===== ヒーロー上のロゴ =====
+   ヒーローは濃いグラデーション。そこへ色付きロゴをそのまま重ねていたため、
+   ブランド名が最初の1画面で読めなかった。
+   白抜きの別素材を用意せず、alphaを保ったまま白一色にする。
+   スクロールしてヘッダーが白背景（.scrolled）になったら元の色に戻す。 */
+.header .logo img { filter: brightness(0) invert(1); transition: filter .3s ease; }
+.header.scrolled .logo img { filter: none; }
 .header-btn {
   background: var(--p); color: var(--w); border: none;
   /* 指で押せる高さを確保する。以前は高さ32pxで、推奨44pxを下回っていた */
