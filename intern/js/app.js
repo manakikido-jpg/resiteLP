@@ -30,6 +30,33 @@ if (bar) {
   });
 }
 
+// ===== Page loader controller =====
+// 中途LP（mid-career/js/app.js）と同一の挙動。約2.2秒の擬似進捗を見せて閉じる。
+// 6秒のセーフティを必ず入れる：requestAnimationFrame はタブが裏に回ると止まるため、
+// これが無いと「戻ってきたらローディングのまま」という状態が起きる。
+(function(){
+  var ov = document.getElementById('plOverlay'); if(!ov) return;
+  var pct = document.getElementById('plPct'), fill = document.getElementById('plFill');
+  document.body.classList.add('pl-lock');
+  var dur = 2200, start = null, done = false;
+  function finish(){
+    if(done) return; done = true;
+    ov.classList.add('pl-hide');
+    document.body.classList.remove('pl-lock');
+    setTimeout(function(){ if(ov && ov.parentNode){ ov.parentNode.removeChild(ov); } }, 800);
+  }
+  function frame(t){
+    if(start===null) start=t;
+    var p=(t-start)/dur; if(p>1)p=1;
+    // 最後の6%はゆっくり詰める（100%到達と同時に消えると唐突に見えるため）
+    var v=p<0.9?(p/0.9)*94:94+((p-0.9)/0.1)*6;
+    pct.textContent=Math.round(v)+'%'; fill.style.width=v+'%';
+    if(p<1){ requestAnimationFrame(frame); } else { setTimeout(finish,320); }
+  }
+  requestAnimationFrame(frame);
+  setTimeout(finish, 6000);
+})();
+
 // ===== Meta Pixel: LINE友だち追加クリックをLeadとして計測 =====
 document.addEventListener('click', function (e) {
   var el = e.target.closest('a[href*="lin.ee"], [onclick*="lin.ee"]');

@@ -50,6 +50,17 @@ src="https://www.facebook.com/tr?id=1064918742533936&ev=PageView&noscript=1"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 
+<!-- PAGE LOADER（中途LPと同じ。制御は js/app.js の末尾） -->
+<div class="pl-overlay" id="plOverlay">
+  <div class="pl-stage">
+    <img class="pl-logo" src="logo.png" alt="可能性ラボ">
+    <div class="pl-prog">
+      <div class="pl-row"><span class="pl-cap">Loading</span><span class="pl-pct" id="plPct">0%</span></div>
+      <div class="pl-bar"><i id="plFill"></i></div>
+    </div>
+  </div>
+</div>
+
 <!-- HEADER -->
 <header class="header">
   <div class="logo"><img src="logo.png" alt="可能性ラボ"></div>

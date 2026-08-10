@@ -1562,3 +1562,28 @@ body::after {
   .sl::before { left: 0; top: -18px; }
   .hero::after, .hero .hero-in::after { display: none; }
 }
+
+/* ===== PAGE LOADER — 中途LPと同じ構造。配色はインターンのテラコッタ系に合わせる =====
+   中途(mid-career)は #2A7AB8 のブルーで組んであるが、こちらは --p:#D14A2A のため
+   同じCSSを流用すると読み込み後に色が変わって壊れて見える。変数から取る。 */
+.pl-overlay{ position:fixed; inset:0; z-index:99999; display:flex; align-items:center; justify-content:center; overflow:hidden;
+  background:linear-gradient(150deg, #FDFAF6 0%, var(--bg1) 40%, #F3E7D8 72%, var(--bg2) 100%);
+  opacity:1; transition:opacity .7s ease, visibility .7s ease; }
+.pl-overlay.pl-hide{ opacity:0; visibility:hidden; pointer-events:none; }
+.pl-overlay::before{ content:''; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(ellipse 80% 60% at 50% 32%, rgba(255,255,255,0.62) 0%, transparent 55%), radial-gradient(ellipse 70% 60% at 90% 95%, rgba(209,74,42,0.14) 0%, transparent 58%); }
+.pl-stage{ display:flex; flex-direction:column; align-items:center; position:relative; z-index:1; }
+.pl-logo{ width:220px; max-width:62vw; display:block; transform-origin:center; filter:drop-shadow(0 8px 26px rgba(160,90,60,0.16));
+  opacity:0; animation:pl-in 1.1s cubic-bezier(.22,.8,.25,1) forwards, pl-breathe 3.4s ease-in-out 1.1s infinite; }
+@keyframes pl-in{ 0%{opacity:0; transform:scale(.96);} 100%{opacity:1; transform:scale(1);} }
+@keyframes pl-breathe{ 0%,100%{transform:scale(1);} 50%{transform:scale(1.018);} }
+.pl-prog{ margin-top:40px; width:300px; max-width:62vw; opacity:0; animation:pl-fade .7s ease .35s forwards; }
+@keyframes pl-fade{ to{opacity:1;} }
+.pl-prog .pl-row{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:11px; }
+.pl-cap{ font-family:var(--sd); font-weight:500; font-size:.6rem; letter-spacing:.4em; text-transform:uppercase; color:var(--p); padding-left:.4em; }
+.pl-pct{ font-family:var(--sd); font-weight:600; font-size:.82rem; color:var(--p); letter-spacing:.04em; font-variant-numeric:tabular-nums; }
+.pl-bar{ height:3px; border-radius:3px; background:#EFDCD0; overflow:hidden; position:relative; }
+.pl-bar i{ position:absolute; inset:0; width:0; border-radius:3px; background:linear-gradient(90deg, var(--p), var(--pl)); }
+body.pl-lock{ overflow:hidden; }
+/* 動きを減らす設定の人には、アニメーションを出さない */
+@media (prefers-reduced-motion: reduce){ .pl-logo,.pl-prog{ animation:none; opacity:1; } }
