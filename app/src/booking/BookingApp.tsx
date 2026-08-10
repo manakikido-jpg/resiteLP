@@ -4,7 +4,7 @@
    ・空き枠は form_config.slots ＋ 既存予定から生成
    ・セッション長は slotMinutes 連動／「無料」表記は一切なし
    ========================================================= */
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Appointment, FormField, FormConfig, WebhookPayload } from "../lib/types";
 import { repository } from "../store/repository";
 import { supabase, isSupabaseConfigured } from "../lib/supabase";
@@ -12,8 +12,20 @@ import { buildBookingRecords } from "../lib/booking";
 import { codeToScores, typeOf } from "../lib/codes";
 import { Calendar } from "./Calendar";
 import { SlotPicker } from "./SlotPicker";
-import { type YMD, ymdStr, todayParts } from "./availability";
+import { type SlotUsage, type YMD, ymdStr, todayParts, usageFromAppointments } from "./availability";
 import { TIMETABLE, fmtDate, slotRange } from "./data";
+
+/** 予約失敗の理由を、候補者が次に何をすればいいか分かる文にする */
+function bookingErrorMessage(e: unknown): string {
+  const raw = typeof e === "object" && e && "message" in e ? String((e as Error).message) : String(e);
+  if (raw.includes("slot_full"))
+    return "申し訳ありません。この時間はちょうど他の方の予約で埋まりました。恐れ入りますが、別の時間をお選びください。";
+  if (raw.includes("slot_past"))
+    return "選択された時間はすでに過ぎています。お手数ですが、日付からもう一度お選びください。";
+  if (raw.includes("slot_invalid"))
+    return "日時が正しく選べていないようです。お手数ですが、日付と時間をもう一度お選びください。";
+  return "予約を保存できませんでした。通信環境をご確認のうえ、時間をおいて再度お試しください。解決しない場合はLINEからご連絡ください。";
+}
 
 /**
  * ヘッダーのロゴ・「トップへ」の遷移先。
@@ -87,7 +99,8 @@ function FieldControl({
 
 export function BookingApp() {
   const [config, setConfig] = useState<FormConfig | null>(null);
-  const [appts, setAppts] = useState<Appointment[]>([]);
+  const [usage, setUsage] = useState<SlotUsage>({});
+  const [errMsg, setErrMsg] = useState("");
 
   // 職業タイプ診断から ?code= で引き継がれた連携コード（あれば候補者の適性テストへ反映）
   const carriedCode = useMemo(() => {
@@ -108,20 +121,46 @@ export function BookingApp() {
   const [submitting, setSubmitting] = useState(false);
   const [reservationToken, setReservationToken] = useState<string | null>(null);
 
+  /**
+   * 空き状況の取得。
+   * Supabase接続時は appointments を直接読めない（読めてしまうと氏名・電話が
+   * 匿名に露出する）ので、件数だけを返す slot_counts RPC を使う。
+   * migration 0005 未適用の環境では RPC が無いため、件数なし＝従来どおり
+   * 全枠オープン表示にフォールバックする（予約自体はサーバ側で弾かれる）。
+   */
+  const loadUsage = useCallback(async (cfg: FormConfig, known?: Appointment[]) => {
+    if (!(isSupabaseConfigured && supabase)) {
+      const appts = known ?? (await repository.loadAll()).appts;
+      return usageFromAppointments(appts);
+    }
+    const from = new Date();
+    const to = new Date(from.getTime() + (cfg.slots.rangeDays + 1) * 86400000);
+    const { data, error } = await supabase.rpc("slot_counts", {
+      p_from: ymdStr({ y: from.getFullYear(), m: from.getMonth() + 1, d: from.getDate() }),
+      p_to: ymdStr({ y: to.getFullYear(), m: to.getMonth() + 1, d: to.getDate() }),
+    });
+    if (error) {
+      console.warn("slot_counts unavailable (migration 0005 未適用?):", error.message);
+      return {};
+    }
+    return (data as SlotUsage) ?? {};
+  }, []);
+
   useEffect(() => {
     let active = true;
     repository
       .loadAll()
-      .then((d) => {
+      .then(async (d) => {
         if (!active) return;
         setConfig(d.formConfig);
-        setAppts(d.appts);
+        const u = await loadUsage(d.formConfig, d.appts);
+        if (active) setUsage(u);
       })
       .catch((e) => console.error("loadAll failed", e));
     return () => {
       active = false;
     };
-  }, []);
+  }, [loadUsage]);
 
   const fields = config?.fields ?? [];
   const slotMinutes = config?.slots.slotMinutes ?? 45;
@@ -154,6 +193,7 @@ export function BookingApp() {
   const submit = async () => {
     if (!stepInfo || !date || !time || submitting) return;
     setSubmitting(true);
+    setErrMsg("");
     const scheduledAt = `${ymdStr(date)}T${time}:00+09:00`;
     const base = {
       name: byMap("name"),
@@ -186,7 +226,10 @@ export function BookingApp() {
       window.scrollTo(0, 0);
     } catch (e) {
       console.error("予約の保存に失敗しました", e);
-      alert("予約の保存に失敗しました。お手数ですが時間をおいて再度お試しください。");
+      // 満枠でここに来た場合、画面の空き状況は古い。最新の件数を取り直して枠を閉じる
+      setErrMsg(bookingErrorMessage(e));
+      setTime(null);
+      if (config) loadUsage(config).then(setUsage).catch(() => {});
     } finally {
       setSubmitting(false);
     }
@@ -344,7 +387,7 @@ export function BookingApp() {
             onMonth={onMonth}
             canPrev={canPrev}
             config={config.slots}
-            appts={appts}
+            usage={usage}
           />
         </div>
 
@@ -361,7 +404,7 @@ export function BookingApp() {
                 <span className="dot" />
                 <span style={{ color: "var(--ts)", fontSize: ".78rem", fontWeight: 400 }}>空き時間</span>
               </div>
-              <SlotPicker date={date} picked={time} onPick={setTime} config={config.slots} appts={appts} />
+              <SlotPicker date={date} picked={time} onPick={setTime} config={config.slots} usage={usage} />
             </div>
           </div>
         )}
@@ -401,6 +444,11 @@ export function BookingApp() {
                   </div>
                 </div>
               </div>
+              {errMsg && (
+                <div className="A-err" role="alert">
+                  {errMsg}
+                </div>
+              )}
               <button className="btn-primary" disabled={!stepInfo || submitting} onClick={submit}>
                 {submitting ? "送信中…" : "面談を予約する"}
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">

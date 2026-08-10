@@ -1,6 +1,6 @@
 /* 予約カレンダー（reference/booking-shared.jsx の Calendar を移植・form_config駆動） */
-import type { Appointment, SlotConfig } from "../lib/types";
-import { type DayStatus, type YMD, dayStatus, todayParts } from "./availability";
+import type { SlotConfig } from "../lib/types";
+import { type DayStatus, type SlotUsage, type YMD, dayStatus, todayParts } from "./availability";
 import { DOW_EN, MONTH_LABEL_EN } from "./data";
 
 interface CalendarProps {
@@ -11,10 +11,10 @@ interface CalendarProps {
   onMonth: (dir: number) => void;
   canPrev?: boolean;
   config: SlotConfig;
-  appts: Appointment[];
+  usage: SlotUsage;
 }
 
-export function Calendar({ y, m, selected, onSelect, onMonth, canPrev = true, config, appts }: CalendarProps) {
+export function Calendar({ y, m, selected, onSelect, onMonth, canPrev = true, config, usage }: CalendarProps) {
   const startDow = new Date(y, m - 1, 1).getDay();
   const daysInMonth = new Date(y, m, 0).getDate();
   const cells: (number | null)[] = [];
@@ -50,7 +50,7 @@ export function Calendar({ y, m, selected, onSelect, onMonth, canPrev = true, co
         ))}
         {cells.map((d, i) => {
           if (d === null) return <div key={i} className="cal-day dim" />;
-          const status: DayStatus = dayStatus({ y, m, d }, config, appts);
+          const status: DayStatus = dayStatus({ y, m, d }, config, usage);
           const isToday = y === today.y && m === today.m && d === today.d;
           const isSel = !!selected && selected.y === y && selected.m === m && selected.d === d;
           const cls = ["cal-day"];

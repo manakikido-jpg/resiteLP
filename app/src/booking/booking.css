@@ -197,3 +197,17 @@ select.inp:invalid { color: var(--tl); }
 .A-done-mypage-lead { font-size: 0.8rem; color: var(--ts); line-height: 1.85; margin-bottom: 16px; }
 .A-done-mypage-lead b { color: var(--p); }
 .A-done-mypage .btn-primary { text-decoration: none; }
+
+/* 予約失敗の説明（満枠・過去時刻など）。何が起きて、次に何をすればいいかを出す */
+.A-err {
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  border: 1px solid #e6c3bb;
+  border-left: 3px solid #c0492f;
+  border-radius: 6px;
+  background: #fdf4f2;
+  color: #8c3522;
+  font-size: 13.5px;
+  line-height: 1.7;
+  text-align: left;
+}

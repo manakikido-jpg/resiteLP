@@ -1,18 +1,18 @@
 /* 時間枠ピッカー（reference/booking-shared.jsx の SlotPicker を移植） */
-import type { Appointment, SlotConfig } from "../lib/types";
-import { type YMD, slotsForDate } from "./availability";
+import type { SlotConfig } from "../lib/types";
+import { type SlotUsage, type YMD, slotsForDate } from "./availability";
 
 interface SlotPickerProps {
   date: YMD | null;
   picked: string | null;
   onPick: (t: string) => void;
   config: SlotConfig;
-  appts: Appointment[];
+  usage: SlotUsage;
 }
 
-export function SlotPicker({ date, picked, onPick, config, appts }: SlotPickerProps) {
+export function SlotPicker({ date, picked, onPick, config, usage }: SlotPickerProps) {
   if (!date) return null;
-  const slots = slotsForDate(date, config, appts);
+  const slots = slotsForDate(date, config, usage);
   if (slots.length === 0) {
     return <div className="slots-empty">この日は受付がありません。別の日をお選びください。</div>;
   }

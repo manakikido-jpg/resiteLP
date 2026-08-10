@@ -60,22 +60,43 @@ function toIsoJST(d) {
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}:00+09:00`;
 }
 
-/* form_config.slots 駆動の空き枠（全枠オープン。capacity判定はサーバ側） */
-function buildSlotsForDay(config, now) {
+/* 枠ごとの予約件数を取得（個人情報は含まない。migration 0005 の slot_counts）。
+   未適用の環境では {} を返し、従来どおり全枠オープン表示にフォールバックする。 */
+async function sbSlotCounts(from, to) {
+  try {
+    const counts = await sbRpc("slot_counts", { p_from: window.ymd(from), p_to: window.ymd(to) });
+    return counts && typeof counts === "object" ? counts : {};
+  } catch (e) {
+    console.warn("slot_counts unavailable (migration 0005 未適用?)", e);
+    return {};
+  }
+}
+
+/* form_config.slots 駆動の空き枠。
+   以前はここが常に taken:false を返し、コメントにも「capacity判定はサーバ側」と
+   書いてあったが、実際にはサーバ側にも定員チェックが無く二重予約が通っていた（R-007）。
+   件数は slot_counts から取り、最終的な可否は mypage_book が強制する。 */
+function buildSlotsForDay(config, now, counts) {
   const minDay = window.addDays(window.startOfDay(now), config.leadDays);
   const maxDay = window.addDays(window.startOfDay(now), config.rangeDays);
   const holidays = config.holidays || [];
+  const capacity = Math.max(1, config.capacity || 1);
   return function (date) {
     const w = config.weekly[date.getDay()];
     if (!w || !w.on) return [];
     if (holidays.includes(window.ymd(date))) return [];
     const d0 = window.startOfDay(date);
     if (d0 < minDay || d0 > maxDay) return [];
+    const dateStr = window.ymd(date);
     const [sh, sm] = w.start.split(":").map(Number);
     const [eh, em] = w.end.split(":").map(Number);
     const out = [];
     for (let m = sh * 60 + sm; m + config.slotMinutes <= eh * 60 + em; m += config.slotMinutes) {
-      out.push({ time: `${window.pad2(Math.floor(m / 60))}:${window.pad2(m % 60)}`, taken: false });
+      const time = `${window.pad2(Math.floor(m / 60))}:${window.pad2(m % 60)}`;
+      const taken = (counts[`${dateStr}T${time}`] || 0) >= capacity;
+      // 当日ぶんは過ぎた時刻も閉じる
+      const past = new Date(`${dateStr}T${time}:00+09:00`).getTime() <= now.getTime();
+      out.push({ time, taken: taken || past });
     }
     return out;
   };
@@ -168,8 +189,10 @@ async function loadMyPage() {
     window.SLOT_CONFIG = fc.slots;
     window.MIN_DAY = window.addDays(window.startOfDay(now), fc.slots.leadDays);
     window.MAX_DAY = window.addDays(window.startOfDay(now), fc.slots.rangeDays);
-    window.slotsForDay = buildSlotsForDay(fc.slots, now);
-    window.dayHasOpen = (date) => window.slotsForDay(date).length > 0;
+    const counts = await sbSlotCounts(window.MIN_DAY, window.MAX_DAY);
+    window.slotsForDay = buildSlotsForDay(fc.slots, now, counts);
+    // 満枠の日を「予約可能」と表示しないよう、空きが1つ以上ある日だけ開ける
+    window.dayHasOpen = (date) => window.slotsForDay(date).some((s) => !s.taken);
   }
 
   // お知らせ（全員共通＋本人個別）をサーバから取得して上書き（失敗時は空に）

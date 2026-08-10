@@ -17,6 +17,8 @@ function Booking({ onClose, toast, accent }) {
   const [type, setType] = useState("第二面談");
   const [mode, setMode] = useState("オンライン");
   const [busy, setBusy] = useState(false);
+  // 満枠で弾かれたあと空き枠を取り直したことを、枠リストの再計算に伝えるための版数
+  const [slotRev, setSlotRev] = useState(0);
 
   const minMonth = startOfMonth(MIN_DAY);
   const maxMonth = startOfMonth(MAX_DAY);
@@ -24,7 +26,11 @@ function Booking({ onClose, toast, accent }) {
   const canNext = month < maxMonth;
 
   const grid = useMemo(() => monthGrid(month), [month.getTime()]);
-  const slots = useMemo(() => (day ? slotsForDay(day) : []), [day && day.getTime()]);
+  // slotsForDay は loadMyPage が window に差し替えるので、取り直したら再計算する
+  const slots = useMemo(
+    () => (day ? window.slotsForDay(day) : []),
+    [day && day.getTime(), slotRev]
+  );
   const morning = slots.filter((s) => parseInt(s.time) < 12);
   const afternoon = slots.filter((s) => parseInt(s.time) >= 12);
 
@@ -50,10 +56,27 @@ function Booking({ onClose, toast, accent }) {
       setStep(4);
       if (toast) toast("予約が完了しました");
     } catch (e) {
-      if (toast) toast("予約に失敗しました。時間をおいて再度お試しください。");
+      // 「失敗しました」で終わらせず、次に何をすればいいかまで出す
+      const raw = String((e && e.message) || e);
+      let msg = "予約できませんでした。通信環境をご確認のうえ、もう一度お試しください。";
+      if (raw.includes("slot_full")) {
+        msg = "この時間はちょうど埋まりました。別の時間をお選びください。";
+        setStep(2); // 時間選択に戻す
+        refreshSlots();
+      } else if (raw.includes("slot_past")) {
+        msg = "選択した時間はすでに過ぎています。日付からお選び直しください。";
+        setStep(1);
+        refreshSlots();
+      }
+      if (toast) toast(msg);
     } finally {
       setBusy(false);
     }
+  }
+
+  /* 満枠で弾かれたとき、画面の空き状況は古い。最新を取り直す */
+  function refreshSlots() {
+    if (window.loadMyPage) window.loadMyPage().then(() => setSlotRev((n) => n + 1)).catch(() => {});
   }
 
   const selStart = day && slot ? new Date(day.getFullYear(), day.getMonth(), day.getDate(), ...slot.time.split(":").map(Number)) : null;
