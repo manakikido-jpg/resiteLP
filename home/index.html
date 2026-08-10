@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-TFZBHV64');</script>
+<!-- End Google Tag Manager -->
+<title>可能性ラボ｜あなたの可能性に、気づく場所</title>
+<meta name="description" content="20〜30代のためのキャリアコーチングと、学生向け長期インターン。転職ありきではなく、あなたの人生を軸に伴走します。まずは無料の職業タイプ診断から。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="可能性ラボ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:url" content="https://kanousei-labo.com/">
+<meta property="og:title" content="可能性ラボ｜あなたの可能性に、気づく場所">
+<meta property="og:description" content="20〜30代のためのキャリアコーチングと、学生向け長期インターン。あなたの人生を軸に伴走します。">
+<meta property="og:image" content="https://kanousei-labo.com/logo.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://kanousei-labo.com/">
+<link rel="icon" type="image/png" href="/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Shippori+Mincho:wght@500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+/* 既存LP（mid-career / intern）と同じ v4ブルーのトークンを使う */
+:root{
+  --p:#2A7AB8; --pl:#5BA3D4; --a:#9CC6E3;
+  --bg1:#F6F9FC; --bg2:#E6EEF4;
+  --t:#2C2C2C; --ts:#6B6B7A; --tl:#A0A0B0; --w:#FFFFFF; --bd:#DCEAF4;
+  --sd:'Syne',sans-serif; --sj:'Shippori Mincho','Noto Serif JP',serif;
+  --sf:'Noto Sans JP','Yu Gothic',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  font-family:var(--sf); color:var(--t); background:var(--bg1);
+  /* 入口ページなので、スマホでスクロールせずに選び終われる高さに収める */
+  min-height:100dvh; display:flex; flex-direction:column;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none;}
+
+.wrap{
+  flex:1; width:100%; max-width:760px; margin:0 auto;
+  padding:22px 20px 16px; display:flex; flex-direction:column; gap:22px;
+}
+
+/* ---- ヘッダー ---- */
+.hd{display:flex;justify-content:center;}
+.hd img{height:44px;width:auto;display:block;}
+
+/* ---- 見出し ---- */
+.intro{text-align:center;}
+.intro .ey{
+  font-family:var(--sd); font-size:11px; font-weight:700; letter-spacing:.22em;
+  color:var(--pl); margin-bottom:10px;
+}
+.intro h1{
+  font-family:var(--sj); font-size:clamp(21px,5.4vw,30px); font-weight:600;
+  line-height:1.55; letter-spacing:.02em;
+}
+.intro h1 em{font-style:normal;color:var(--p);}
+.intro p{
+  margin-top:10px; font-size:13.5px; line-height:1.85; color:var(--ts);
+  font-weight:300;
+}
+
+/* ---- 選択カード ---- */
+.pick{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:560px){ .pick{grid-template-columns:1fr;} }
+
+.card{
+  position:relative; display:flex; flex-direction:column; gap:8px;
+  background:var(--w); border:1px solid var(--bd); border-radius:14px;
+  padding:20px 18px 18px; min-height:124px;
+  box-shadow:0 1px 3px rgba(42,122,184,.06);
+  transition:transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+}
+.card:hover,.card:focus-visible{
+  transform:translateY(-2px); border-color:var(--pl);
+  box-shadow:0 10px 26px rgba(42,122,184,.14);
+}
+.card:active{transform:translateY(0);}
+.card .tag{
+  font-family:var(--sd); font-size:10px; font-weight:700; letter-spacing:.18em;
+  color:var(--pl);
+}
+.card .ttl{
+  font-family:var(--sj); font-size:19px; font-weight:600; line-height:1.5;
+  letter-spacing:.01em;
+}
+.card .sub{font-size:12.5px;line-height:1.8;color:var(--ts);font-weight:300;}
+.card .go{
+  margin-top:auto; padding-top:12px;
+  display:flex; align-items:center; gap:7px;
+  font-size:13px; font-weight:700; color:var(--p);
+}
+.card .go svg{width:16px;height:16px;flex-shrink:0;}
+
+/* ---- 診断への導線（副次） ---- */
+.tt{
+  display:flex; align-items:center; gap:13px;
+  background:var(--bg2); border-radius:12px; padding:15px 18px;
+  transition:background .16s ease;
+}
+.tt:hover{background:#dbe8f1;}
+.tt .ic{
+  flex-shrink:0; width:38px; height:38px; border-radius:10px;
+  background:var(--w); color:var(--p);
+  display:flex; align-items:center; justify-content:center;
+}
+.tt .ic svg{width:19px;height:19px;}
+.tt .m{flex:1;min-width:0;}
+.tt .m b{display:block;font-size:13.5px;font-weight:700;line-height:1.5;}
+.tt .m span{display:block;font-size:11.5px;color:var(--ts);margin-top:2px;font-weight:300;}
+.tt .ch{flex-shrink:0;color:var(--tl);}
+.tt .ch svg{width:17px;height:17px;display:block;}
+
+/* ---- フッター ---- */
+.ft{
+  text-align:center; padding:12px 20px 18px;
+  font-size:11px; color:var(--tl); letter-spacing:.04em;
+}
+</style>
+</head>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TFZBHV64"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager -->
+
+<div class="wrap">
+  <header class="hd">
+    <img src="/logo.png" alt="可能性ラボ" width="745" height="342">
+  </header>
+
+  <div class="intro">
+    <div class="ey">POSSIBILITY LABO</div>
+    <h1>あなたの可能性に、<br><em>気づく</em>場所。</h1>
+    <p>ご自身に当てはまるほうをお選びください。</p>
+  </div>
+
+  <nav class="pick">
+    <a class="card" href="/mid-career/">
+      <span class="tag">CAREER</span>
+      <span class="ttl">転職を<br>考えている方</span>
+      <span class="sub">20〜30代のキャリアコーチング。転職ありきではなく、人生を軸に伴走します。</span>
+      <span class="go">くわしく見る
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </span>
+    </a>
+
+    <a class="card" href="/intern/">
+      <span class="tag">INTERNSHIP</span>
+      <span class="ttl">学生の方</span>
+      <span class="sub">就活のその前に、自分の「軸」を見つけにいく長期インターン。エントリーは無料です。</span>
+      <span class="go">くわしく見る
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </span>
+    </a>
+  </nav>
+
+  <a class="tt" href="/type-test/">
+    <span class="ic">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.6L19.5 10l-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.4z"/></svg>
+    </span>
+    <span class="m">
+      <b>まずは無料の職業タイプ診断から</b>
+      <span>全20問・約3分。16タイプのうち、あなたはどれ？</span>
+    </span>
+    <span class="ch">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+    </span>
+  </a>
+</div>
+
+<footer class="ft">© 可能性ラボ</footer>
+
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','1064918742533936');fbq('track','PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1064918742533936&ev=PageView&noscript=1"/></noscript>
+<!-- End Meta Pixel Code -->
+</body>
+</html>

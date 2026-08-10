@@ -1,11 +1,24 @@
 /* =========================================================
    Vercel 統合ビルド
-   - app/（Vite）をビルド → dist/ の土台に
-   - 静的サイト（mypage / type-test / intern / mid-career）を dist/ 配下へコピー
-   出力: dist/  （Vercel の outputDirectory）
+   出力: dist/（Vercel の outputDirectory）
+
+   公開されるURLの構成:
+     /               home/          入口の選択画面
+     /mid-career/    mid-career/    中途LP
+     /intern/        intern/        インターンLP
+     /type-test/     type-test/     職業タイプ診断
+     /booking.html   app/（Vite）   面談予約（公開）
+     /mypage/        mypage/        候補者マイページ
+     /admin/         app/（Vite）   管理ログイン（社内）
+
+   ブランドのドメイン直下に社内のログイン画面が出るのを避けるため、
+   Vite の index.html（管理アプリ）は /admin/ へ移し、
+   ルートには home/index.html（選択画面）を置く。
+   Vite の base は "/" のままなので、生成される asset の参照は
+   "/assets/..." という絶対パス。HTMLの置き場所を変えても壊れない。
    ========================================================= */
 import { execSync } from "node:child_process";
-import { cpSync, rmSync, existsSync } from "node:fs";
+import { cpSync, rmSync, existsSync, mkdirSync, renameSync } from "node:fs";
 
 function run(cmd, cwd) {
   console.log(`\n$ ${cmd}  (cwd: ${cwd || "."})`);
@@ -23,7 +36,22 @@ run("npm run build", "app");
 rmSync("dist", { recursive: true, force: true });
 cpSync("app/dist", "dist", { recursive: true });
 
-// 3) 静的サイトをサブパスへ配置
+// 3) 管理アプリを /admin/ へ移す（ルートは選択画面に明け渡す）
+if (!existsSync("dist/index.html")) {
+  throw new Error("dist/index.html が無い。Vite のビルド結果が想定と違う");
+}
+mkdirSync("dist/admin", { recursive: true });
+renameSync("dist/index.html", "dist/admin/index.html");
+console.log("moved  dist/index.html -> dist/admin/index.html （管理アプリ）");
+
+// 4) 入口の選択画面をルートへ
+if (!existsSync("home/index.html")) {
+  throw new Error("home/index.html が無い。ルートに出すページが存在しない");
+}
+cpSync("home", "dist", { recursive: true });
+console.log("copied home/ -> dist/ （ルートの選択画面）");
+
+// 5) 静的サイトをサブパスへ配置
 const STATIC_SITES = ["mypage", "type-test", "intern", "mid-career"];
 for (const site of STATIC_SITES) {
   if (existsSync(site)) {

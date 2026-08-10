@@ -29,10 +29,11 @@ function bookingErrorMessage(e: unknown): string {
 
 /**
  * ヘッダーのロゴ・「トップへ」の遷移先。
- * 統合ビルドでは `/` が管理アプリのログイン画面になるため、以前はここを押した
- * 候補者が社内画面に着いていた。キャリア面談LPを候補者向けのトップとする（R-006）。
+ * 以前は `/` を指していたが、統合ビルドの `/` は管理アプリのログイン画面だったため、
+ * 候補者が社内画面に着いていた（R-006）。
+ * 現在は `/` が入口の選択画面（home/index.html）なので、ここを指してよい。
  */
-const LP_URL = "/mid-career/";
+const LP_URL = "/";
 
 type FieldValues = Record<string, string>;
 
