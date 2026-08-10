@@ -1,0 +1,83 @@
+name: CI
+
+# master への push と、すべてのPRで実行する。
+# Vercel は「ビルドが通るか」しか見ないので、型・テストの担保はここで行う。
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  check:
+    name: typecheck / test / build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # Vercel のビルド環境に合わせる。上げるときは Vercel 側も合わせること
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      # npm install ではなく ci。package-lock.json のとおりに入れる（R-009 の周辺で統一）
+      - name: 依存をインストール
+        working-directory: app
+        run: npm ci --no-audit --no-fund
+
+      - name: 型チェック
+        working-directory: app
+        run: npx tsc -b --noEmit
+
+      - name: 単体テスト
+        working-directory: app
+        run: npx vitest run
+
+      # 統合ビルドまで通す。ここが落ちると Vercel でも落ちる
+      - name: 統合ビルド（dist/ の組み立て）
+        run: node scripts/build-vercel.mjs
+
+      # 公開URLの構成が壊れていないかを確認する。
+      # 管理アプリを /admin/ へ移す処理があるため、ここが崩れると
+      # ドメイン直下に社内のログイン画面が出てしまう（F-200 / F-103）
+      - name: 公開URLの構成を検証
+        run: |
+          set -e
+          fail=0
+          check() {
+            if [ -e "dist/$1" ]; then echo "  OK   dist/$1"; else echo "  NG   dist/$1 が無い"; fail=1; fi
+          }
+          echo "--- 生成物の確認 ---"
+          check "index.html"
+          check "admin/index.html"
+          check "booking.html"
+          check "mypage/index.html"
+          check "type-test/index.html"
+          check "intern/index.html"
+          check "mid-career/index.html"
+
+          echo "--- ルートが選択画面であること ---"
+          if grep -q 'class="pick"' dist/index.html; then
+            echo "  OK   dist/index.html は選択画面"
+          else
+            echo "  NG   dist/index.html が選択画面ではない（管理アプリが露出している可能性）"; fail=1
+          fi
+
+          echo "--- /admin/ が管理アプリであること ---"
+          if grep -q 'candidate' dist/admin/index.html || grep -q '候補者プロファイル' dist/admin/index.html; then
+            echo "  OK   dist/admin/index.html は管理アプリ"
+          else
+            echo "  NG   dist/admin/index.html が管理アプリではない"; fail=1
+          fi
+
+          echo "--- 旧ドメインが残っていないこと ---"
+          if grep -rl "kanousei-labo.vercel.app" dist --include=*.html >/dev/null 2>&1; then
+            echo "  NG   dist の HTML に旧ドメインが残っている:"; grep -rl "kanousei-labo.vercel.app" dist --include=*.html | sed 's/^/       /'; fail=1
+          else
+            echo "  OK   旧ドメインの残りなし"
+          fi
+
+          exit $fail
