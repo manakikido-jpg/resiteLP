@@ -4,7 +4,7 @@
    ========================================================= */
 
 /* ---------- お知らせ詳細 ---------- */
-function AnnounceDetail({ item, onBack, toast }) {
+function AnnounceDetail({ item, onBack }) {
   const { MPIcon } = window;
   const iconFor = (k) => (k === "service" ? "chart" : k === "campaign" ? "gift" : "info");
   return (
@@ -22,11 +22,11 @@ function AnnounceDetail({ item, onBack, toast }) {
         <h1 className="ad-title">{item.title}</h1>
         <span className="ad-date">{window.MP_NOW.getFullYear()}年 {item.date}</span>
         <div className="ad-body">{item.body}</div>
-        {item.cta && (
-          <button className="btn btn-grad btn-lg btn-block ad-cta" onClick={() => toast(item.cta + "を開きます")}>
-            {item.cta}<MPIcon name="arrowRight" size={17} />
-          </button>
-        )}
+        {/*
+          お知らせのCTAはリンク先を持つ列（cta_url）が無く、押しても遷移できなかった。
+          「開きます」とだけ出すダミーは置かない。相談導線はLINEに一本化されているため、
+          問い合わせが必要なお知らせは本文でLINEへ誘導する（R-002）。
+        */}
       </div>
     </div>
   );
@@ -102,7 +102,7 @@ function App() {
         ) : screen === "booking" ? (
           <window.Booking onClose={home} toast={toast} />
         ) : screen === "announce" && ann ? (
-          <AnnounceDetail item={ann} onBack={home} toast={toast} />
+          <AnnounceDetail item={ann} onBack={home} />
         ) : (
           <>
             <div className="mp-appbar">

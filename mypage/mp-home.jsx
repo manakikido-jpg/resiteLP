@@ -4,9 +4,14 @@
 
 /* ---------- 次回面談：グラデーション・ヒーロー（A / B） ---------- */
 function NextHero({ onReschedule, toast, compact }) {
-  const { NEXT, WD, fmtTime, countdownLabel, MPIcon } = window;
+  const { NEXT, WD, fmtTime, countdownLabel, MPIcon, mpGCalUrl } = window;
   const cd = countdownLabel(NEXT.at);
   const d = NEXT.at;
+  const gcal = mpGCalUrl({
+    start: NEXT.at, minutes: NEXT.durationMin,
+    title: `可能性ラボ ${NEXT.typeLabel}`,
+    details: `担当コーチ: ${NEXT.coach}`,
+  });
   return (
     <div className="next-grad">
       <div className="ng-top">
@@ -23,21 +28,17 @@ function NextHero({ onReschedule, toast, compact }) {
         <span className="ng-pill"><MPIcon name="video" size={14} />{NEXT.modeLabel}</span>
         <span className="ng-pill"><MPIcon name="user" size={14} />{NEXT.coach} コーチ</span>
       </div>
-      {!compact && NEXT.url && (
-        <div className="join-row">
-          <MPIcon name="video" size={16} />
-          <span className="url">{NEXT.url}</span>
-        </div>
-      )}
+      {/* 当日の参加URLは自動発行していない。押せるように見せず、事実だけ書く（R-002） */}
+      <div className="join-row">
+        <MPIcon name="video" size={16} />
+        <span className="url">当日の参加方法は担当コーチからLINEでお送りします</span>
+      </div>
       <div className="ng-actions">
-        <button className="btn btn-white" onClick={() => toast("当日リンクをLINEにお送りします")}>
-          <MPIcon name="video" size={16} />参加する
-        </button>
-        <button className="btn btn-white" onClick={() => toast("カレンダーに追加しました")}>
-          <MPIcon name="calPlus" size={16} />追加
-        </button>
+        <a className="btn btn-white" href={gcal} target="_blank" rel="noopener noreferrer">
+          <MPIcon name="calPlus" size={16} />カレンダーに追加
+        </a>
         <button className="btn btn-white" onClick={onReschedule} aria-label="日程変更">
-          <MPIcon name="refresh" size={16} />
+          <MPIcon name="refresh" size={16} />日程変更
         </button>
       </div>
     </div>
@@ -46,9 +47,14 @@ function NextHero({ onReschedule, toast, compact }) {
 
 /* ---------- 次回面談：ライトカード（C） ---------- */
 function NextCardLight({ onReschedule, toast }) {
-  const { NEXT, WD, fmtTime, countdownLabel, MPIcon } = window;
+  const { NEXT, WD, fmtTime, countdownLabel, MPIcon, mpGCalUrl } = window;
   const cd = countdownLabel(NEXT.at);
   const d = NEXT.at;
+  const gcal = mpGCalUrl({
+    start: NEXT.at, minutes: NEXT.durationMin,
+    title: `可能性ラボ ${NEXT.typeLabel}`,
+    details: `担当コーチ: ${NEXT.coach}`,
+  });
   return (
     <div className="card next-card">
       <div className="nc-top">
@@ -66,9 +72,8 @@ function NextCardLight({ onReschedule, toast }) {
         <div className="row"><span className="k"><MPIcon name="user" size={14} />担当</span><span className="v">{NEXT.coach} コーチ</span></div>
       </div>
       <div className="nc-actions">
-        <button className="btn btn-primary" onClick={() => toast("当日リンクをLINEにお送りします")}><MPIcon name="video" size={16} />参加する</button>
-        <button className="btn" onClick={() => toast("カレンダーに追加しました")}><MPIcon name="calPlus" size={16} />追加</button>
-        <button className="btn" onClick={onReschedule} aria-label="日程変更"><MPIcon name="refresh" size={16} /></button>
+        <a className="btn btn-primary" href={gcal} target="_blank" rel="noopener noreferrer"><MPIcon name="calPlus" size={16} />カレンダーに追加</a>
+        <button className="btn" onClick={onReschedule} aria-label="日程変更"><MPIcon name="refresh" size={16} />日程変更</button>
       </div>
     </div>
   );
@@ -136,7 +141,6 @@ function AnnouncementsFeed({ items, onOpen }) {
             </div>
             <div className="ann-title">{a.title}</div>
             <div className="ann-lead">{a.lead}</div>
-            {a.cta && <span className="ann-cta">{a.cta}<MPIcon name="arrowRight" size={14} /></span>}
           </div>
           <span className="ann-chev"><MPIcon name="chevR" size={18} /></span>
         </button>
@@ -168,11 +172,18 @@ function AnnouncementsRows({ items, onOpen }) {
 /* ---------- グリーティング ---------- */
 function Greeting({ big }) {
   const { ME, greetWord, Avatar } = window;
+  // 「姓 名」で入力される前提で name.split(" ")[1] を出していたため、
+  // スペース無しで登録された候補者は氏名が丸ごと消えて「こんにちは、さん」になっていた。
+  // 予約フォームの氏名は自由入力の1項目なので、分割せずそのまま呼ぶ（R-005）。
+  const displayName = (ME.name || "").trim();
   return (
     <div className="greet">
       <Avatar initial={ME.initial} size={big ? 50 : 48} />
       <div className="g-main">
-        <div className="g-hello">{greetWord()}、{ME.name.split(" ")[1]}さん</div>
+        <div className="g-hello">
+          {greetWord()}
+          {displayName && <span className="g-name">、{displayName}さん</span>}
+        </div>
         <div className="g-sub">{ME.segLabel}・{ME.job}</div>
       </div>
       <span className="typechip"><span className="code">{ME.typeCode}</span><span className="nm">{ME.typeName}</span></span>
@@ -204,13 +215,13 @@ function NextEmpty({ onBook, grad }) {
 }
 
 /* ---------- クイックアクション ---------- */
-function QuickActions({ onBook, toast }) {
-  const { MPIcon } = window;
+/* 行き先のあるものだけ並べる。「市場価値診断」はページが存在しないため撤去（R-002） */
+function QuickActions({ onBook }) {
+  const { MPIcon, MP_LINE_URL } = window;
   return (
     <div className="quick">
       <button onClick={onBook}><span className="qi"><MPIcon name="calPlus" size={20} /></span><span className="ql">面談を予約</span></button>
-      <button onClick={() => toast("市場価値診断を開きます")}><span className="qi"><MPIcon name="chart" size={20} /></span><span className="ql">市場価値診断</span></button>
-      <button onClick={() => toast("コーチに相談する")}><span className="qi"><MPIcon name="headset" size={20} /></span><span className="ql">相談する</span></button>
+      <a href={MP_LINE_URL} target="_blank" rel="noopener noreferrer"><span className="qi"><MPIcon name="headset" size={20} /></span><span className="ql">LINEで相談</span></a>
     </div>
   );
 }
@@ -269,7 +280,7 @@ function HomeA({ onBook, onOpenAnn, toast, items, hasNext }) {
           </React.Fragment>
         );
       case "quick":
-        return <QuickActions key="quick" onBook={onBook} toast={toast} />;
+        return <QuickActions key="quick" onBook={onBook} />;
       case "coaching":
         return window.COACHING ? (
           <React.Fragment key="coaching">

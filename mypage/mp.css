@@ -62,7 +62,7 @@ body {
 button { font-family: inherit; cursor: pointer; color: inherit; }
 input, textarea, select { font-family: inherit; }
 ::selection { background: var(--brand-ring); }
-a { color: inherit; }
+a { color: inherit; text-decoration: none; }
 
 /* ===================== レビュー用ステージ ===================== */
 .mp-stage {
@@ -242,23 +242,28 @@ a { color: inherit; }
   background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2);
   border-radius: var(--r-sm); padding: 10px 12px;
 }
-.join-row .url { font-family: var(--mono); font-size: 11.5px; opacity: .9; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+/* 元はZoom等のURLを1行省略で出す枠だった。今は案内文を入れるので折り返す（R-002） */
+.join-row { align-items: flex-start; }
+.join-row .url { font-size: 12px; line-height: 1.5; opacity: .9; flex: 1; }
 
 /* ===================== グリーティング ===================== */
 .greet { display: flex; align-items: center; gap: 13px; }
 .greet .avatar { width: 48px; height: 48px; font-size: 19px; }
 .greet .g-main { min-width: 0; flex: 1; }
 .greet .g-hello { font-size: 17px; font-weight: 800; letter-spacing: .01em; line-height: 1.3; }
+/* 氏名の途中で改行させない（「山田太／郎さん」になるのを防ぐ）。折り返すなら挨拶との間で */
+.greet .g-name { white-space: nowrap; }
 .greet .g-sub { font-size: 12px; color: var(--ink-3); margin-top: 1px; }
 
 /* クイックアクション */
-.quick { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.quick button {
+/* 行き先のある2つ（面談予約 / LINE相談）だけを並べる。要素はbuttonとaが混在する */
+.quick { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.quick button, .quick a {
   background: var(--surface); border: 1px solid var(--line); border-radius: var(--r);
   padding: 15px 8px 13px; display: flex; flex-direction: column; align-items: center; gap: 8px;
   box-shadow: var(--shadow-sm); transition: transform .12s, box-shadow .12s, border-color .12s;
 }
-.quick button:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: #d9e3eb; }
+.quick button:hover, .quick a:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: #d9e3eb; }
 .quick .qi { width: 40px; height: 40px; border-radius: 12px; background: var(--brand-tint); color: var(--brand-deep); display: flex; align-items: center; justify-content: center; }
 .quick .ql { font-size: 12px; font-weight: 700; color: var(--ink-2); }
 

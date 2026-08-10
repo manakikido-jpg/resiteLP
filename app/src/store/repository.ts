@@ -125,7 +125,8 @@ class LocalStorageRepository implements DataRepository {
 
 interface CandidateRow {
   id: string;
-  reservation_token: string | null;
+  /** 未保持なら upsert から丸ごと省く（下記 candidateToRow のコメント参照） */
+  reservation_token?: string | null;
   name: string;
   phone: string;
   exp: string;
@@ -177,7 +178,10 @@ function rowToCandidate(r: CandidateRow): Candidate {
 function candidateToRow(c: Candidate): CandidateRow {
   return {
     id: c.id,
-    reservation_token: c.reservationToken ?? null,
+    // null を明示送信すると、DB既定の gen_random_bytes による自動発行を
+    // 上書きして NULL で潰してしまう。トークンを持たない候補者はマイページの
+    // リンクを発行できなくなるため、未保持のときは列ごと省く（R-003）。
+    ...(c.reservationToken ? { reservation_token: c.reservationToken } : {}),
     name: c.name,
     phone: c.phone,
     exp: c.exp,

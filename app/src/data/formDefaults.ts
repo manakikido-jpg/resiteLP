@@ -25,7 +25,8 @@ export const DEFAULT_FORM_FIELDS: FormField[] = [
     required: true,
     placeholder: "例：090-0000-0000",
     mapKey: "phone",
-    help: "前日に確認のSMSを送ります。Zoomリンクは別途メールにて。営業電話には使いません。",
+    // SMS/メールの自動送信は未実装。実装していない約束は書かない（R-002）
+    help: "担当コーチからのご連絡に使います。営業電話には使いません。",
   },
   { id: "f_exp", label: "転職経験", type: "radio", required: false, options: ["なし", "1回", "2回", "3回以上"], mapKey: "exp" },
   { id: "f_age", label: "年齢", type: "radio", required: false, options: ["〜24", "25–29", "30–34", "35–39", "40–44", "45〜"], mapKey: "age" },
@@ -47,5 +48,7 @@ export const DEFAULT_SLOT_CONFIG: SlotConfig = {
   capacity: 2,
   leadDays: 1,
   rangeDays: 30,
-  holidays: ["2026-06-15", "2026-06-22"],
+  // 既定は休止日なし。以前デモ用の固定日が入っており、form_config 未作成時に
+  // 過去日が休止日として設定された状態で立ち上がっていた（R-001）。
+  holidays: [],
 };

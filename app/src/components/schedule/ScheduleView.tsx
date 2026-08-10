@@ -20,12 +20,19 @@ import {
   ymd,
 } from "../../lib/datetime";
 import { googleCalendarUrl } from "../../lib/gcal";
+import { isSupabaseConfigured } from "../../lib/supabase";
 import { AppBar } from "../AppBar";
 import { Icon } from "../ui/Icon";
 import { Avatar, Field, Saver, Select, TextInput } from "../ui/primitives";
 
-const SCHED_TODAY = new Date(2026, 5, 3); // デモ基準日（2026-06-03）
-const isToday = (d: Date) => sameDay(d, SCHED_TODAY);
+/**
+ * 「今日」は必ず実時刻から取る。
+ * ここは以前 `new Date(2026, 5, 3)` のデモ固定値になっており、
+ * コーチがスケジュールを開くと常に過去の月が表示されていた（R-001）。
+ * モジュール定数にすると同じ事故を再発させるので、呼び出しごとに評価する。
+ */
+const today = () => new Date();
+const isToday = (d: Date) => sameDay(d, today());
 
 function Modal({
   title,
@@ -86,12 +93,12 @@ function ApptEdit({
       name: "",
       type: "first",
       coach: "",
-      at: `${presetDate || ymd(SCHED_TODAY)}T10:00:00+09:00`,
+      at: `${presetDate || ymd(today())}T10:00:00+09:00`,
       status: "予定",
       source: "manual",
       memo: "",
     };
-  const at0 = parseAt(init.at) || SCHED_TODAY;
+  const at0 = parseAt(init.at) || today();
   const [name, setName] = useState(init.name);
   const [candidateId, setCandidateId] = useState(init.candidateId || "");
   const [type, setType] = useState(init.type);
@@ -455,7 +462,8 @@ export function ScheduleView() {
   const { appts, saving, simulateWebhook, navigate, notify, candidates } = useApp();
   const [mode, setMode] = useState<"calendar" | "list">("calendar");
   const [calMode, setCalMode] = useState<"month" | "week" | "day">("month");
-  const [cursor, setCursor] = useState<Date>(SCHED_TODAY);
+  // 初期表示は「今日」。useState の初期化関数にして毎レンダーの再生成を避ける
+  const [cursor, setCursor] = useState<Date>(() => today());
   const [edit, setEdit] = useState<EditState>(null);
 
   const step = (dir: number) => {
@@ -486,21 +494,29 @@ export function ScheduleView() {
   const editAppt = (a: Appointment) => setEdit({ a });
   const addOn = (dateStr: string) => setEdit({ presetDate: dateStr });
 
+  /**
+   * 予約フォーム受信のデモ取り込み。
+   * 押すと候補者と予定が実際に1件作られるため、Supabase接続時（＝本番）では出さない。
+   * 以前は本番のスケジュール画面に常設されており、押すと架空の「藤井 結衣」が
+   * 本番DBに登録される状態だった（R-004）。
+   */
+  const showDemo = !isSupabaseConfigured;
   const runDemo = () => {
     const p = {
-      name: "藤井 結衣",
-      phone: "090-7777-1234",
+      name: "デモ 太郎",
+      phone: "090-0000-0000",
       exp: "1回",
       age: "27",
       job: "事務（保険）",
       loc: "東京都江東区",
-      scheduledAt: "2026-06-05T10:30:00+09:00",
+      // 固定日を置くと今日から離れた月に飛ぶため、常に翌日の10:30にする
+      scheduledAt: `${ymd(addDays(today(), 1))}T10:30:00+09:00`,
       interviewType: "first" as const,
-      coach: "森田 涼介",
+      coach: "",
     };
     const { appt } = simulateWebhook(p);
     setCursor(parseAt(appt.at)!);
-    notify(`予約フォームから「${p.name}」さんを取り込みました`);
+    notify(`予約フォームから「${p.name}」さんを取り込みました（デモ）`);
   };
 
   return (
@@ -515,10 +531,12 @@ export function ScheduleView() {
             <p>面談予定を管理します。予約フォームからの予定は自動で登録されます。</p>
           </div>
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-            <button className="btn" onClick={runDemo} title="予約フォーム送信をシミュレート">
-              <Icon name="bolt" size={15} />
-              フォーム連携をデモ
-            </button>
+            {showDemo && (
+              <button className="btn" onClick={runDemo} title="予約フォーム送信をシミュレート（ローカル環境のみ）">
+                <Icon name="bolt" size={15} />
+                フォーム連携をデモ
+              </button>
+            )}
             <button className="btn btn-primary" onClick={() => setEdit({})}>
               <Icon name="plus" size={16} />
               予定を追加
@@ -531,7 +549,7 @@ export function ScheduleView() {
             <button className="btn-icon btn" onClick={() => step(-1)}>
               <Icon name="chevL" size={18} />
             </button>
-            <button className="btn btn-sm" onClick={() => setCursor(SCHED_TODAY)}>
+            <button className="btn btn-sm" onClick={() => setCursor(today())}>
               今日
             </button>
             <button className="btn-icon btn" onClick={() => step(1)}>
@@ -585,7 +603,7 @@ export function ScheduleView() {
           <div>
             <b>予約フォーム連携（Webhook）</b>
             　候補者がフォームを送信すると、基本情報と面談予定が自動登録され、候補者プロファイルも自動生成されます。
-            「フォーム連携をデモ」で取り込みの流れを確認できます。
+            {showDemo && "「フォーム連携をデモ」で取り込みの流れを確認できます（ローカル環境のみ表示）。"}
           </div>
         </div>
       </main>

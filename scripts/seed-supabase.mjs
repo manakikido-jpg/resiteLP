@@ -46,7 +46,7 @@ const SLOTS = {
 };
 const FIELDS = [
   { id: "f_name", label: "お名前", type: "text", required: true, placeholder: "例：山田 花子", mapKey: "name" },
-  { id: "f_phone", label: "電話番号", type: "tel", required: true, placeholder: "例：090-0000-0000", mapKey: "phone", help: "前日に確認のSMSを送ります。" },
+  { id: "f_phone", label: "電話番号", type: "tel", required: true, placeholder: "例：090-0000-0000", mapKey: "phone", help: "担当コーチからのご連絡に使います。営業電話には使いません。" },
   { id: "f_exp", label: "転職経験", type: "radio", required: false, options: ["なし", "1回", "2回", "3回以上"], mapKey: "exp" },
   { id: "f_age", label: "年齢", type: "radio", required: false, options: ["〜24", "25–29", "30–34", "35–39", "40–44", "45〜"], mapKey: "age" },
   { id: "f_job", label: "現在の職業", type: "text", required: false, placeholder: "例：法人営業、看護師など", mapKey: "job" },
