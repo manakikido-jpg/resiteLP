@@ -129,7 +129,8 @@ async function loadMyPage() {
       durationMin: (fc && fc.slots && fc.slots.slotMinutes) || 60,
       mode: "online",
       modeLabel: "オンライン",
-      place: "Google Meet",
+      // 業務マニュアル上の面談ツールはZoom（コーチがホスト）。予約ページの表記とも揃える
+      place: "Zoom",
       url: "",
       coach: a.coach || me.coach || "担当",
     };

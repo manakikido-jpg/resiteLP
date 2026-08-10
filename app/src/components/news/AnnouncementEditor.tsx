@@ -75,10 +75,12 @@ export function AnnouncementEditor({
         <Field label="本文（詳細画面に表示）" full>
           <TextArea value={value.body} rows={4} onChange={(v) => set("body", v)} placeholder="詳細画面で表示される本文…" />
         </Field>
-        <Field label="ボタン文言（任意・詳細画面のCTA）">
-          <TextInput value={value.cta} onChange={(v) => set("cta", v)} placeholder="例：診断を受ける" />
-        </Field>
       </div>
+      {/*
+        「ボタン文言（CTA）」の入力欄は撤去した。リンク先を保存する列が無く、
+        マイページ側で押しても遷移できないダミーになっていたため（R-002）。
+        遷移先を持たせるなら announcements に cta_url を足してから復活させる。
+      */}
 
       <div className="note-box" style={{ marginTop: 14, display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
         <Switch on={value.active} onChange={(v) => set("active", v)} label={value.active ? "公開中" : "非公開"} />

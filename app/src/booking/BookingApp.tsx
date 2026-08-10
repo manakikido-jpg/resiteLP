@@ -15,8 +15,12 @@ import { SlotPicker } from "./SlotPicker";
 import { type YMD, ymdStr, todayParts } from "./availability";
 import { TIMETABLE, fmtDate, slotRange } from "./data";
 
-// TODO: 本番では LP（v4_white.html 等）の本番URLに差し替え
-const LP_URL = "/";
+/**
+ * ヘッダーのロゴ・「トップへ」の遷移先。
+ * 統合ビルドでは `/` が管理アプリのログイン画面になるため、以前はここを押した
+ * 候補者が社内画面に着いていた。キャリア面談LPを候補者向けのトップとする（R-006）。
+ */
+const LP_URL = "/mid-career/";
 
 type FieldValues = Record<string, string>;
 
@@ -226,10 +230,11 @@ export function BookingApp() {
             </div>
             <div className="ey">RESERVATION CONFIRMED</div>
             <h2>面談を予約しました。</h2>
+            {/* 自動送信は未実装。「送りました」と書くと、届かない連絡を待たせることになる（R-002） */}
             <p>
-              確認SMSと、Zoomリンクを記載したメールを送信しました。
+              担当コーチから、ご登録の電話番号にご連絡します。
               <br />
-              当日まで、どうぞお気軽に。
+              当日の参加方法もそのときにお伝えします。
             </p>
             <div className="A-done-card">
               <div className="A-done-row">

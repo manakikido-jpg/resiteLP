@@ -68,6 +68,29 @@ function ProgressBar({ pct }) {
   return <div className="cp-bar"><i style={{ width: w + "%" }} /></div>;
 }
 
+/* --- LINE友だち追加（相談導線の唯一の宛先） --- */
+const MP_LINE_URL = "https://lin.ee/Q90TvNX";
+
+/**
+ * Googleカレンダーの「予定を追加」テンプレートURL。
+ * 認証もバックエンドも要らないので、候補者がログイン中のGoogleアカウントに
+ * その場で登録できる。管理アプリ側 app/src/lib/gcal.ts と同じ手法。
+ * 以前ここは押しても何も起きないボタンで、トーストだけ
+ * 「カレンダーに追加しました」と出していた（R-002）。
+ */
+function mpGCalUrl({ start, minutes = 60, title, details }) {
+  if (!(start instanceof Date) || isNaN(start.getTime())) return "";
+  const utc = (d) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
+  const end = new Date(start.getTime() + minutes * 60000);
+  const q = new URLSearchParams({
+    action: "TEMPLATE",
+    text: title || "面談",
+    dates: `${utc(start)}/${utc(end)}`,
+  });
+  if (details) q.set("details", details);
+  return `https://calendar.google.com/calendar/render?${q.toString()}`;
+}
+
 Object.assign(window, {
-  MPIcon, Avatar, countdownLabel, greetWord, ProgressBar,
+  MPIcon, Avatar, countdownLabel, greetWord, ProgressBar, mpGCalUrl, MP_LINE_URL,
 });

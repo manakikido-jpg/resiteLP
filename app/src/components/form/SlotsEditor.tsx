@@ -5,7 +5,12 @@ import { WEEKDAYS, addDays, fmtDateJP, ymd } from "../../lib/datetime";
 import { Icon } from "../ui/Icon";
 import { Switch } from "../ui/primitives";
 
-const FORM_TODAY = new Date(2026, 5, 4); // デモ基準日（2026-06-04）
+/**
+ * プレビューの起点と「休止日を追加」の初期値は実時刻から取る。
+ * 以前は `new Date(2026, 5, 4)` のデモ固定値で、休止日を追加するたび
+ * 過去日が入って毎回手で直す必要があった（R-001）。
+ */
+const today = () => new Date();
 
 type Updater = (prev: SlotConfig) => SlotConfig;
 
@@ -19,7 +24,7 @@ export function SlotsEditor({
   const upd = (patch: Partial<SlotConfig>) => setConfig((c) => ({ ...c, ...patch }));
   const updDay = (wd: number, patch: Partial<SlotConfig["weekly"][number]>) =>
     setConfig((c) => ({ ...c, weekly: { ...c.weekly, [wd]: { ...c.weekly[wd], ...patch } } }));
-  const addHoliday = () => setConfig((c) => ({ ...c, holidays: [...c.holidays, ymd(FORM_TODAY)] }));
+  const addHoliday = () => setConfig((c) => ({ ...c, holidays: [...c.holidays, ymd(today())] }));
   const setHoliday = (i: number, v: string) =>
     setConfig((c) => ({ ...c, holidays: c.holidays.map((h, idx) => (idx === i ? v : h)) }));
   const delHoliday = (i: number) =>
@@ -152,8 +157,9 @@ export function SlotsEditor({
 function upcomingBookable(config: SlotConfig, maxDays = 3) {
   const out: { date: Date; times: string[] }[] = [];
   const holidays = new Set(config.holidays);
+  const base = today();
   for (let off = config.leadDays; off <= config.rangeDays && out.length < maxDays; off++) {
-    const d = addDays(FORM_TODAY, off);
+    const d = addDays(base, off);
     const wd = d.getDay();
     if (!config.weekly[wd]?.on) continue;
     if (holidays.has(ymd(d))) continue;

@@ -60,11 +60,16 @@ function Booking({ onClose, toast, accent }) {
 
   /* ---------- 完了画面 ---------- */
   if (step === 4) {
+    const gcal = window.mpGCalUrl({
+      start: selStart, minutes: (window.SLOT_CONFIG && window.SLOT_CONFIG.slotMinutes) || 60,
+      title: `可能性ラボ ${type}`, details: `担当コーチ: ${ME.coach}`,
+    });
     return (
       <div className="done-screen">
         <div className="done-check"><MPIcon name="checkBig" size={40} stroke={2.4} /></div>
         <h2>予約が完了しました</h2>
-        <p>確認のメッセージをLINEにお送りしました。<br />当日お会いできるのを楽しみにしています。</p>
+        {/* 自動送信は未実装。届かない連絡を待たせない（R-002） */}
+        <p>担当コーチから、LINEで当日のご案内をお送りします。<br />当日お会いできるのを楽しみにしています。</p>
         <div className="done-detail">
           <div className="confirm-card">
             <div className="confirm-row">
@@ -86,9 +91,9 @@ function Booking({ onClose, toast, accent }) {
           </div>
         </div>
         <div className="book-footer" style={{ width: "100%", marginTop: 6 }}>
-          <button className="btn btn-lg" onClick={() => toast && toast("カレンダーに追加しました")}>
+          <a className="btn btn-lg" href={gcal} target="_blank" rel="noopener noreferrer">
             <MPIcon name="calPlus" size={17} />カレンダーに追加
-          </button>
+          </a>
           <button className="btn btn-primary btn-lg flex2" onClick={onClose}>ホームに戻る</button>
         </div>
       </div>

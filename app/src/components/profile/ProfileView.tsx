@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useApp } from "../../store/AppStore";
 import type { Candidate } from "../../lib/types";
 import { asmtTotal } from "../../lib/assessment";
+import { newReservationToken } from "../../lib/candidate";
 import { typeOf } from "../../lib/codes";
 import { LOST_STAGE, STAGES, stageOf } from "../../lib/stage";
 import type { CandidateStage } from "../../lib/types";
@@ -93,16 +94,32 @@ export function ProfileView({ id }: { id: string }) {
     );
   };
 
+  // 以前 upsert が reservation_token を null で送っていたため、その時期に作られた
+  // 候補者はトークンを持たない。ボタンを隠して終わりにせず、その場で発行できるようにする（R-003）
+  const issueMypageLink = () => {
+    setField(id, ["reservationToken"], newReservationToken());
+    notify("マイページのリンクを発行しました。もう一度押すとコピーできます");
+  };
+
   return (
     <>
       <AppBar
         right={
           <>
             <Saver saving={saving} />
-            {c.reservationToken && (
+            {c.reservationToken ? (
               <button className="btn btn-ghost btn-sm" onClick={copyMypageLink} title="候補者マイページのリンクをコピー">
                 <Icon name="arrowRight" size={14} />
                 マイページlink
+              </button>
+            ) : (
+              <button
+                className="btn btn-ghost btn-sm"
+                onClick={issueMypageLink}
+                title="この候補者はまだマイページ用のトークンを持っていません。押すと発行します"
+              >
+                <Icon name="plus" size={14} />
+                マイページlinkを発行
               </button>
             )}
             <button className="btn btn-ghost btn-sm" onClick={onDelete}>

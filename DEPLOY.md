@@ -15,7 +15,6 @@
 - `vercel.json` … buildCommand / outputDirectory(`dist`)
 - `scripts/build-vercel.mjs` … app(Vite)ビルド＋静的サイトを dist へコピー
 - `package.json`（ルート）… `npm run build`
-- `middleware.js` … Basic認証（アクセス制限・任意）
 
 ## デプロイ方法（どちらか）
 
@@ -40,16 +39,14 @@ vercel --prod # 本番反映
 
 ## アクセス制限（リンク共有者だけ閲覧）
 
-### 方法1：Basic認証（無料プランでOK・同梱の middleware.js）
-Vercel プロジェクトの **Settings → Environment Variables** に2つ追加：
+### 方法1：Basic認証（middleware） — ⚠️ **未実装**
+以前この項目には「同梱の `middleware.js` に `BASIC_AUTH_USER` / `BASIC_AUTH_PASS` を設定すれば
+全ページを保護できる」と書かれていたが、**`middleware.js` はこのリポジトリに存在しない**
+（git履歴にも一度も無い）。環境変数を設定しても**何も保護されない**ので注意。
+必要になったら `middleware.ts` を新規に作ること（機能要項 F-107）。
 
-| Name | Value |
-|---|---|
-| `BASIC_AUTH_USER` | 任意のID（例：`labo`） |
-| `BASIC_AUTH_PASS` | 任意のパスワード |
-
-→ 再デプロイすると、**全ページでID/パスワードを要求**。URL＋ID/パスを知る人だけ閲覧可。
-（環境変数を未設定にすると制限は無効＝誰でも閲覧。）
+なお**管理アプリ（`/`）自体は Supabase Auth のログインが必須**で、
+候補者データもRLSで匿名からは読めないため、データが露出しているわけではない。
 
 ### 方法2：Vercel の Password Protection（Proプラン）
 Settings → **Deployment Protection → Password Protection** をON。1つのパスワードで保護。
