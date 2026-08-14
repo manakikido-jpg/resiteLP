@@ -44,13 +44,16 @@ export default async function handler(req, res) {
       `📋 送信先ID（${kind}）\n\n${id}\n\n` +
       `このIDをClaudeに伝えてください。\n設定が終わったらWebhookはオフに戻せます。`;
 
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+
+    // ① そのトークルームへ返信
     try {
       await fetch("https://api.line.me/v2/bot/message/reply", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers,
         body: JSON.stringify({
           replyToken: ev.replyToken,
           messages: [{ type: "text", text }],
@@ -58,6 +61,21 @@ export default async function handler(req, res) {
       });
     } catch (e) {
       console.error("reply failed", e);
+    }
+
+    // ② 1:1トークにも同じものを送る。
+    //    グループ内の返信が何らかの理由で失敗しても、IDが手元に残るようにするため。
+    //    （友だちは日報を受け取る本人だけなので、broadcast が実質1:1になる）
+    if (src.groupId || src.roomId) {
+      try {
+        await fetch("https://api.line.me/v2/bot/message/broadcast", {
+          method: "POST",
+          headers,
+          body: JSON.stringify({ messages: [{ type: "text", text }] }),
+        });
+      } catch (e) {
+        console.error("broadcast failed", e);
+      }
     }
   }
 
