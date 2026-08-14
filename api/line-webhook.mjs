@@ -14,13 +14,19 @@
    ========================================================= */
 
 export default async function handler(req, res) {
-  // LINE Developers の「検証」ボタンや、ブラウザからのGETに応える
+  const token = process.env.LINE_CHANNEL_ACCESS_TOKEN;
+
+  // LINE Developers の「検証」ボタンや、ブラウザからのGETに応える。
+  // トークンが読めているかも返す（値そのものは出さない）。
+  // ここが「なし」だと、ボットはグループに入っても黙ったままになる。
   if (req.method !== "POST") {
-    res.status(200).send("line-webhook: ok");
+    res.status(200).json({
+      ok: true,
+      token: token ? "あり" : "なし",
+      hint: token ? "設定OK" : "Vercelの環境変数 LINE_CHANNEL_ACCESS_TOKEN を設定して再デプロイしてください",
+    });
     return;
   }
-
-  const token = process.env.LINE_CHANNEL_ACCESS_TOKEN;
 
   let body = req.body;
   if (typeof body === "string") {
