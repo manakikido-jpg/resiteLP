@@ -141,6 +141,21 @@ function renderChapter(){
       <button class="ch-next" id="nextBtn" ${answered<5?'disabled':''} onclick="nextCh()">${state.chapter===3?'結果を見る':'次の章へ'}</button>
     </div>`;
 
+  // 「あてはまる／あてはまらない」のラベルからも両端を選べるようにする。
+  // ラベルは選択肢の真上にあり押せそうに見えるが、以前は無反応で、
+  // デッドクリックとして記録されていた。
+  // 既存のボタンのクリックを流用するので、選択の処理は1か所のまま。
+  document.querySelectorAll('.qitem').forEach(item=>{
+    const lk2 = item.querySelector('.lk');
+    if(!lk2) return;
+    item.querySelectorAll('.qaxis .l').forEach((lab,i)=>{
+      lab.addEventListener('click', ()=>{
+        const b = lk2.querySelector('.lk-opt[data-val="' + (i===0?2:-2) + '"]');
+        if(b) b.click();
+      });
+    });
+  });
+
   document.querySelectorAll('.lk').forEach(lk=>{
     const idx = parseInt(lk.dataset.idx,10);
     lk.querySelectorAll('.lk-opt').forEach(btn=>{

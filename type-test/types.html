@@ -41,7 +41,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 .zk-chip .st{ letter-spacing:-1px; }
 /* グリッド */
 .zk-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:22px; }
-.zk-card{ background:var(--card); border:2.5px solid var(--ink); box-shadow:6px 6px 0 var(--ink); padding:22px 22px 20px; display:flex; flex-direction:column; position:relative; }
+.zk-card{ cursor:pointer; background:var(--card); border:2.5px solid var(--ink); box-shadow:6px 6px 0 var(--ink); padding:22px 22px 20px; display:flex; flex-direction:column; position:relative; }
 .zk-card.hide{ display:none; }
 .zk-ctop{ display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
 .zk-no{ font-family:var(--dj); font-size:0.9rem; color:var(--ink3); }
@@ -190,12 +190,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   }).join('');
 
   // --- 展開トグル ---
+  // カード全体をタップで開閉する。
+  // 以前は「▾ 詳しく見る」だけが反応し、カード本体を押しても何も起きなかった。
+  // カードは見た目が押せそうなので、実際にデッドクリックとして記録されていた。
   document.getElementById('zkGrid').addEventListener('click', function (e) {
-    var btn = e.target.closest('.zk-more');
-    if (!btn) return;
-    var card = btn.closest('.zk-card');
+    // カード内のリンクは本来の動作を優先する
+    if (e.target.closest('a')) return;
+    var card = e.target.closest('.zk-card');
+    if (!card) return;
     var open = card.classList.toggle('open');
-    btn.textContent = open ? '▴ 閉じる' : '▾ 詳しく見る';
+    var btn = card.querySelector('.zk-more');
+    if (btn) btn.textContent = open ? '▴ 閉じる' : '▾ 詳しく見る';
   });
 
   // --- フィルタ ---
