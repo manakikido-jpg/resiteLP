@@ -86,7 +86,8 @@ body{
 .lk-short{ display:none; }
 
 .qaxis{ display:flex; justify-content:space-between; font-family:var(--ss); font-weight:800; font-size:0.58rem; letter-spacing:0.06em; color:var(--ink3); margin:0 2px 8px; text-transform:uppercase; }
-.qaxis .l{ color:var(--gold); }
+/* ラベルからも両端を選べる。押せる範囲を少し広げる（デッドクリック対策） */
+.qaxis .l{ color:var(--gold); cursor:pointer; padding:5px 3px; margin:-5px -3px; }
 
 /* chapter footer */
 .ch-foot{ max-width:760px; margin:0 auto; padding:0 20px 90px; display:flex; align-items:center; gap:12px; }
